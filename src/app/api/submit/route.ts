@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { checkAndPromoteRole, ROLES, assignDiscordRole } from '@/lib/xp';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../auth/[...nextauth]/route';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
     try {
-        const data = await req.json();
-        const { userId, wallet, quotedTweet, commentedTweet, username } = data;
+        const session = await getServerSession(authOptions);
+        if (!session || !session.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-        if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        const userId = (session.user as any).id;
+        const data = await req.json();
+        const { wallet, quotedTweet, commentedTweet, username } = data;
 
         const userRef = db.collection('applications').doc(userId);
         const doc = await userRef.get();

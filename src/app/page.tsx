@@ -2,33 +2,35 @@
 
 import { useEffect, useState } from 'react';
 import Dashboard from './dashboard/page';
+import { useSession, signIn } from 'next-auth/react';
 
 export default function Home() {
-  const [user, setUser] = useState<any>(null);
+  const { data: session, status } = useSession();
+  const user = session?.user as any;
+  const loadingSession = status === 'loading';
+
   const [app, setApp] = useState<any>(null);
   const [missions, setMissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    if (loadingSession) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
     const fetchData = async () => {
       try {
-        const userRes = await fetch('/api/user');
-        const userData = await userRes.json();
-        setUser(userData);
+        const [missionsRes, appRes] = await Promise.all([
+          fetch('/api/missions'),
+          fetch('/api/application')
+        ]);
+        setMissions(await missionsRes.json());
 
-        if (userData) {
-          const [missionsRes, appRes] = await Promise.all([
-            fetch('/api/missions'),
-            fetch('/api/application')
-          ]);
-          setMissions(await missionsRes.json());
-
-          const appData = await appRes.json();
-          // If no appData exists (new user filling directives), we still want to render the directives page
-          // BUT wait, if we setApp(null), page.tsx renders the form. If we setApp(data), it renders Dashboard.
-          setApp(appData || false);
-        }
+        const appData = await appRes.json();
+        setApp(appData || false);
       } catch (err) {
         console.error('Failed to fetch data:', err);
       } finally {
@@ -37,7 +39,7 @@ export default function Home() {
     };
 
     fetchData();
-  }, []);
+  }, [user, loadingSession]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -70,7 +72,7 @@ export default function Home() {
     }
   };
 
-  if (loading) return <div className="container" style={{ textAlign: 'center', marginTop: '100px' }}>Loading...</div>;
+  if (loading || loadingSession) return <div className="container" style={{ textAlign: 'center', marginTop: '100px' }}>Loading...</div>;
 
   if (!user) {
     return (
@@ -79,7 +81,7 @@ export default function Home() {
           <div className="hero">
             <img src="/img/frogs-gray-ensemble.png" alt="22 Frogs" className="frogs-img" />
             <div>
-              <a href="/auth/discord" className="btn-discord">LOGIN WITH DISCORD</a>
+              <button onClick={() => signIn('discord')} className="btn-discord" style={{ border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>LOGIN WITH DISCORD</button>
             </div>
           </div>
         </div>

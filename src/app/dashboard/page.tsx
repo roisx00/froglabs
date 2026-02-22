@@ -1,13 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
+import useSWR from 'swr';
+import { signOut } from 'next-auth/react';
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Dashboard({ initialUser, initialApp, initialMissions }: any = {}) {
     const [user, setUser] = useState<any>(initialUser || null);
-    const [app, setApp] = useState<any>(initialApp || null);
     const [missions, setMissions] = useState<any[]>(initialMissions || []);
-    const [loading, setLoading] = useState(!initialUser);
+    const { data: appData } = useSWR('/api/application', fetcher, {
+        fallbackData: initialApp,
+        refreshInterval: 3000
+    });
+
+    const app = appData || initialApp;
+    const [loading, setLoading] = useState(!initialUser && !app);
 
     useEffect(() => {
         if (initialUser) return;
@@ -26,9 +34,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                 setMissions(missionsData);
 
                 if (userData) {
-                    const appRes = await fetch('/api/application');
-                    const appData = await appRes.json();
-                    setApp(appData);
+                    // Application data is automatically fetched by SWR
                 }
             } catch (err) {
                 console.error('Failed to fetch dashboard data:', err);
@@ -40,26 +46,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
         fetchData();
     }, []);
 
-    useEffect(() => {
-        if (!user) return;
 
-        const socket = io();
-
-        socket.on('xpUpdate', (data: any) => {
-            if (data.userId !== user.id) return;
-            setApp((prev: any) => ({ ...prev, ...data }));
-        });
-
-        socket.on('roleUpdate', (data: any) => {
-            if (data.userId !== user.id) return;
-            // In a real app we might refetch or update roles array
-            window.location.reload();
-        });
-
-        return () => {
-            socket.disconnect();
-        };
-    }, [user]);
 
     if (loading) return <div className="container" style={{ textAlign: 'center', marginTop: '100px' }}>Loading...</div>;
     if (!user) return <div className="container" style={{ textAlign: 'center', marginTop: '100px' }}>Please <a href="/auth/discord">login</a> to continue.</div>;
@@ -105,7 +92,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                     </div>
                     <span style={{ fontWeight: 800, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>User Panel</span>
                 </div>
-                <a href="/logout" className="btn-logout">Sign Out</a>
+                <button onClick={() => signOut()} className="btn-logout" style={{ background: 'transparent', border: '1px solid currentColor', cursor: 'pointer' }}>Sign Out</button>
             </header>
 
             <div style={{ textAlign: 'center', marginTop: '20px' }}>
