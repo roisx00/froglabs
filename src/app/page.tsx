@@ -109,14 +109,18 @@ export default function Home() {
 
           <form onSubmit={handleSubmit}>
             {regMissions.map((m, idx) => (
-              <div key={m.id} className="directive-card">
-                <span className="step-indicator">Directive 0{idx + 1}</span>
-                <div className="task-row">
-                  <div className="task-text">
+              <div key={m.id} className="directive-card" style={{ marginBottom: '24px', padding: '24px', border: '2px solid #e5e7eb', borderRadius: '20px', background: '#fff' }}>
+                <span className="step-indicator" style={{ display: 'inline-block', background: '#f3f4f6', color: '#374151', fontSize: '0.75rem', fontWeight: 800, padding: '6px 12px', borderRadius: '100px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px', border: '2px solid #e5e7eb' }}>
+                  Directive 0{idx + 1}
+                </span>
+                <div className="task-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '15px', background: '#fafaf9', padding: '16px 20px', borderRadius: '16px', border: '2px solid #e5e7eb' }}>
+                  <div className="task-text" style={{ fontWeight: 700, fontSize: '1.1rem', color: '#111', display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ color: '#6b7280', fontSize: '1.5rem', lineHeight: 1 }}>•</span>
                     {m.title}
                   </div>
-                  <a href={m.link} target="_blank" className="btn-go">INITIATE</a>
+                  <a href={m.link} target="_blank" className="btn-go" style={{ background: '#000', color: '#fff', padding: '10px 24px', borderRadius: '100px', textDecoration: 'none', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', flexShrink: 0 }}>
+                    INITIATE
+                  </a>
                 </div>
                 {m.actionType === 'quote' && (
                   <div className="input-group" style={{ marginTop: '20px', marginBottom: 0 }}>
