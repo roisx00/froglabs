@@ -1,23 +1,45 @@
 {
-  "name": "whitelist-project",
-  "version": "1.0.0",
-  "main": "server.js",
+  "name": "froglabs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch server.ts",
+    "build": "next build",
+    "start": "NODE_ENV=production tsx server.ts",
+    "lint": "eslint"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "body-parser": "^2.2.2",
-    "discord.js": "^14.25.1",
-    "dotenv": "^17.3.1",
-    "express": "^5.2.1",
-    "express-session": "^1.19.0",
+    "body-parser": "^1.20.3",
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "firebase-admin": "^13.1.0",
+    "next": "15.1.6",
     "passport": "^0.7.0",
     "passport-discord": "^0.1.4",
-    "socket.io": "^4.8.3"
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/body-parser": "^1.19.0",
+    "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.0",
+    "@types/node": "^20",
+    "@types/passport": "^1.0.16",
+    "@types/passport-discord": "^0.1.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.6",
+    "nodemon": "^3.1.9",
+    "tailwindcss": "^4"
   }
 }
