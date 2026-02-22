@@ -109,31 +109,37 @@ export default function Home() {
 
           <form onSubmit={handleSubmit}>
             {regMissions.map((m, idx) => (
-              <div key={m.id} style={{ marginBottom: '30px', paddingBottom: '20px', borderBottom: '1px solid #eee' }}>
+              <div key={m.id} className="directive-card">
                 <span className="step-indicator">Directive 0{idx + 1}</span>
                 <div className="task-row">
-                  <div className="task-text">• {m.title}</div>
+                  <div className="task-text">
+                    <span style={{ color: '#6b7280', fontSize: '1.5rem', lineHeight: 1 }}>•</span>
+                    {m.title}
+                  </div>
                   <a href={m.link} target="_blank" className="btn-go">INITIATE</a>
                 </div>
                 {m.actionType === 'quote' && (
-                  <div className="input-group" style={{ marginTop: '15px', marginBottom: 0 }}>
-                    <label className="input-label">Your Quoted Tweet URL <span style={{ color: 'red' }}>*</span></label>
+                  <div className="input-group" style={{ marginTop: '20px', marginBottom: 0 }}>
+                    <label className="input-label">Your Quoted Tweet URL <span style={{ color: '#ef4444' }}>*</span></label>
                     <input type="text" name="quotedTweet" placeholder="https://x.com/your-username/status/..." required style={{ marginBottom: 0 }} />
                   </div>
                 )}
                 {m.actionType === 'comment' && (
-                  <div className="input-group" style={{ marginTop: '15px', marginBottom: 0 }}>
-                    <label className="input-label">Your Comment Link <span style={{ color: 'red' }}>*</span></label>
+                  <div className="input-group" style={{ marginTop: '20px', marginBottom: 0 }}>
+                    <label className="input-label">Your Comment Link <span style={{ color: '#ef4444' }}>*</span></label>
                     <input type="text" name="commentedTweet" placeholder="https://x.com/your-username/status/..." required style={{ marginBottom: 0 }} />
                   </div>
                 )}
               </div>
             ))}
 
-            <div className="input-group">
-              <span className="step-indicator">Payment Gateway</span>
-              <label className="input-label">0x Wallet Address <span style={{ color: 'red' }}>*</span></label>
-              <input type="text" name="wallet" placeholder="0x..." required />
+            <div className="directive-card" style={{ background: '#f8fafc', borderColor: '#e2e8f0' }}>
+              <span className="step-indicator" style={{ background: '#111', color: '#fff', borderColor: '#111' }}>Final Step</span>
+              <div className="input-group" style={{ background: 'transparent', marginBottom: 0 }}>
+                <label className="input-label" style={{ fontSize: '1.1rem' }}>Destination Wallet Address <span style={{ color: '#ef4444' }}>*</span></label>
+                <input type="text" name="wallet" placeholder="0x..." required style={{ background: '#fff', border: '2px solid #cbd5e1' }} />
+                <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '10px', fontWeight: 600 }}>This address will be submitted for whitelist allocation.</p>
+              </div>
             </div>
 
             <button type="submit" className="btn-primary" disabled={submitting} style={{ fontSize: '1.1rem', padding: '18px', marginTop: '10px' }}>
