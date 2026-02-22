@@ -1,0 +1,548 @@
+:root {
+    --primary: #4c5d5e;
+    --bg-light: #d1d7d9;
+    --text-main: #000000;
+    --text-muted: #555555;
+    --btn-bg: #4c5d5e;
+    --btn-shadow: #000000;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.no-scroll {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+}
+
+.container {
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.hero-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.frogs-img {
+    max-height: 65vh;
+    max-height: 65dvh;
+    width: auto;
+    max-width: 95%;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 25px;
+    display: block;
+}
+
+.btn-discord {
+    display: inline-block;
+    background-color: var(--btn-bg);
+    color: #000;
+    padding: 18px 50px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 4px solid #000;
+    border-radius: 12px;
+    box-shadow: 4px 4px 0px #000;
+    transition: all 0.1s;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn-discord:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px #000;
+}
+
+@media (max-width: 768px) {
+    .frogs-img {
+        max-height: 55vh;
+        max-height: 55dvh;
+        margin-bottom: 20px;
+    }
+
+    .btn-discord {
+        padding: 14px 35px;
+        font-size: 1rem;
+        border-width: 3px;
+        box-shadow: 3px 3px 0px #000;
+    }
+}
+
+@media (max-width: 480px) {
+    .frogs-img {
+        max-height: 50vh;
+        max-height: 50dvh;
+    }
+
+    .btn-discord {
+        padding: 12px 25px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Navigation Header */
+header {
+    width: 100%;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.logo-container img {
+    height: 40px;
+}
+
+.btn-logout {
+    background: #ff5555;
+    border: 2px solid black;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    box-shadow: 2px 2px 0px #000;
+    transition: all 0.1s;
+}
+
+.btn-logout:active {
+    transform: translate(1px, 1px);
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.btn-primary:hover {
+    background: #00e67a;
+    transform: translateY(-2px);
+    box-shadow: 5px 5px 0px #000;
+}
+
+.btn-go:hover {
+    background: #444;
+    transform: scale(1.05);
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* --- Dashboard Layout --- */
+
+.glass-card {
+    background: white;
+    border: 3px solid black;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 6px 6px 0px #000;
+    text-align: left;
+    max-width: 800px;
+    width: 100%;
+    margin: 60px auto 20px auto;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-top: 20px;
+}
+
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Eligibility & Stats */
+.stat-card {
+    background: white;
+    border: 3px solid black;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 4px 4px 0px #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 900;
+}
+
+/* XP Systems */
+.xp-container {
+    background: white;
+    border: 3px solid black;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 4px 4px 0px #000;
+}
+
+.xp-row {
+    margin-bottom: 20px;
+}
+
+.xp-row:last-child {
+    margin-bottom: 0;
+}
+
+.xp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.xp-label {
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.xp-count {
+    font-weight: 900;
+    font-size: 0.9rem;
+}
+
+.xp-bar-bg {
+    width: 100%;
+    height: 12px;
+    background: #eee;
+    border: 2px solid black;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.xp-bar-fill {
+    height: 100%;
+    background: #000;
+    transition: width 0.5s ease-in-out;
+}
+
+.xp-bar-fill.social {
+    background: #00a2ff;
+}
+
+.xp-bar-fill.discord {
+    background: #5865F2;
+}
+
+/* Mission Center */
+.mission-card {
+    background: white;
+    border: 3px solid black;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 6px 6px 0px #000;
+    margin-top: 30px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mission-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.mission-item:last-child {
+    border-bottom: none;
+}
+
+.mission-info h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+}
+
+.mission-info p {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 0;
+}
+
+.mission-reward {
+    font-weight: 900;
+    font-size: 0.8rem;
+    color: #22c55e;
+    background: #f0fdf4;
+    padding: 4px 8px;
+    border: 1.5px solid #22c55e;
+    border-radius: 4px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+/* Badge Gallery */
+.badge-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 15px;
+    justify-content: center;
+}
+
+.role-tag {
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border: 2px solid black;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+.role-wl {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.role-og {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.role-mod {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.role-default {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+/* Form Elements */
+.step-indicator {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #ff5555;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.task-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.task-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.4;
+    padding-right: 15px;
+}
+
+.btn-go {
+    background: #000;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-go:hover {
+    background: #333;
+}
+
+.input-group {
+    margin-bottom: 25px;
+}
+
+.input-label {
+    display: block;
+    color: #555;
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.gradient-text {
+    font-size: 2rem;
+    font-weight: 800;
+    color: black;
+    margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 3px solid black;
+    border-radius: 8px;
+    background: white;
+    margin-bottom: 15px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.btn-primary {
+    background: #00ff88;
+    border: 3px solid black;
+    color: black;
+    padding: 12px 24px;
+    font-weight: 700;
+    border-radius: 8px;
+    box-shadow: 3px 3px 0px #000;
+    cursor: pointer;
+    width: 100%;
+    text-transform: uppercase;
+    transition: all 0.1s;
+    text-decoration: none;
+    display: inline-block;
+    box-sizing: border-box;
+}
+
+.btn-primary:active {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0px #000;
+}
+
+.btn-logout {
+    background: #ff5555;
+    border: 2px solid black;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.badge {
+    padding: 4px 10px;
+    border: 2px solid black;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.badge-pending {
+    background: #ffdd00;
+}
+
+.badge-approved {
+    background: #00ff88;
+}
+
+.badge-rejected {
+    background: #ff5555;
+    color: white;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 3px solid black;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}

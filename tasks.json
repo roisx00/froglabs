@@ -1,0 +1,56 @@
+[
+  {
+    "id": "t1",
+    "title": "Follow @INTERNXBT on X",
+    "link": "https://x.com/Internxbt",
+    "xpReward": 50,
+    "type": "social",
+    "location": "registration",
+    "actionType": "follow"
+  },
+  {
+    "id": "t2",
+    "title": "Like Pinned Transmission",
+    "link": "https://x.com/i/status/2024480944271564875",
+    "xpReward": 50,
+    "type": "social",
+    "location": "registration",
+    "actionType": "like"
+  },
+  {
+    "id": "t3",
+    "title": "Join Official Discord",
+    "link": "https://discord.gg/5g6M2vT6W7",
+    "xpReward": 100,
+    "type": "discord",
+    "location": "registration",
+    "actionType": "join"
+  },
+  {
+    "id": "t1771682365115",
+    "title": "Test Quote Mission",
+    "link": "https://x.com/test/status/1",
+    "xpReward": 50,
+    "type": "social",
+    "location": "registration",
+    "actionType": "quote"
+  },
+  {
+    "id": "t1771684313667",
+    "title": "Registration Task: Quote",
+    "link": "https://x.com/internxbt",
+    "xpReward": 100,
+    "type": "social",
+    "location": "registration",
+    "actionType": "quote"
+  },
+  {
+    "id": "t1771684326469",
+    "title": "Dashboard Task: Like",
+    "link": "https://x.com/internxbt",
+    "xpReward": 50,
+    "type": "social",
+    "location": "dashboard",
+    "actionType": "like"
+  }
+]
