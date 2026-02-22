@@ -15,12 +15,15 @@ import { ROLES, ROLE_ID_TO_NAME, checkAndPromoteRole, assignDiscordRole } from '
 import { db } from './src/lib/firebase';
 
 const dev = process.env.NODE_ENV !== 'production';
+console.log(`> Initializing Next.js app (dev: ${dev})...`);
 const app = next({ dev });
 const handle = app.getRequestHandler();
 const port = parseInt(process.env.PORT || '3000', 10);
 
-
+console.log('> Calling app.prepare()...');
 app.prepare().then(() => {
+    console.log('✅ Next.js app.prepare() completed successfully.');
+    console.log('✅ Next.js app prepared');
     const expressApp = express();
     const server = createServer(expressApp);
     const io = new Server(server);
