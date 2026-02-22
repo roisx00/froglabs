@@ -13,21 +13,21 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [userRes, missionsRes] = await Promise.all([
-          fetch('/api/user'),
-          fetch('/api/missions')
-        ]);
-
+        const userRes = await fetch('/api/user');
         const userData = await userRes.json();
-        const missionsData = await missionsRes.json();
-
         setUser(userData);
-        setMissions(missionsData);
 
         if (userData) {
-          const appRes = await fetch('/api/application');
+          const [missionsRes, appRes] = await Promise.all([
+            fetch('/api/missions'),
+            fetch('/api/application')
+          ]);
+          setMissions(await missionsRes.json());
+
           const appData = await appRes.json();
-          setApp(appData);
+          // If no appData exists (new user filling directives), we still want to render the directives page
+          // BUT wait, if we setApp(null), page.tsx renders the form. If we setApp(data), it renders Dashboard.
+          setApp(appData || false);
         }
       } catch (err) {
         console.error('Failed to fetch data:', err);
@@ -88,7 +88,7 @@ export default function Home() {
   }
 
   if (app) {
-    return <Dashboard />;
+    return <Dashboard initialUser={user} initialApp={app} initialMissions={missions} />;
   }
 
   const regMissions = missions.filter(m => m.location === 'registration');

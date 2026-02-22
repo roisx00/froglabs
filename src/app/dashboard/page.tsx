@@ -3,13 +3,15 @@
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-export default function Dashboard() {
-    const [user, setUser] = useState<any>(null);
-    const [app, setApp] = useState<any>(null);
-    const [missions, setMissions] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+export default function Dashboard({ initialUser, initialApp, initialMissions }: any = {}) {
+    const [user, setUser] = useState<any>(initialUser || null);
+    const [app, setApp] = useState<any>(initialApp || null);
+    const [missions, setMissions] = useState<any[]>(initialMissions || []);
+    const [loading, setLoading] = useState(!initialUser);
 
     useEffect(() => {
+        if (initialUser) return;
+
         const fetchData = async () => {
             try {
                 const [userRes, missionsRes] = await Promise.all([
