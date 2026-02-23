@@ -27,10 +27,10 @@ const ROLES = {
 
 const xpCooldowns = new Map<string, number>();
 const XP_COOLDOWN_MS = 60 * 1000;
-const XP_PER_MESSAGE = 15;
+const XP_PER_MESSAGE = 0.5;
 
 client.on('ready', () => {
-    console.log(`🤖 Standalone Discord Bot Logged in as ${client.user?.tag}!`);
+    console.log(`Standalone Discord Bot Logged in as ${client.user?.tag}!`);
     console.log(`This bot script is designed to run 24/7 on a platform like Railway or Render.`);
 });
 
@@ -61,15 +61,15 @@ client.on('messageCreate', async (message) => {
                     await member.roles.add(ROLES.FROG_RUNNER);
                     await userRef.update({ currentLevelRole: ROLES.FROG_RUNNER });
                     const channel = message.guild?.channels.cache.get('1135140417931841576') as TextChannel;
-                    if (channel) channel.send(`🎉 **${message.author.username}** has reached Stage 1 (1,000 Chat XP) and earned the <@&${ROLES.FROG_RUNNER}> role!`);
+                    if (channel) channel.send(`SYSTEM: ${message.author.username} has reached Stage 1 (1,000 Chat XP) and earned the FROG RUNNER role.`);
                 } else if (newChatXP >= 3000 && !member.roles.cache.has(ROLES.ROYAL_RIBBIT)) {
                     await member.roles.add(ROLES.ROYAL_RIBBIT);
                     await userRef.update({ currentLevelRole: ROLES.ROYAL_RIBBIT });
                     const channel = message.guild?.channels.cache.get('1135140417931841576') as TextChannel;
-                    if (channel) channel.send(`👑 **${message.author.username}** has reached Stage 2 (3,000 Chat XP) and earned the <@&${ROLES.ROYAL_RIBBIT}> role!`);
+                    if (channel) channel.send(`SYSTEM: ${message.author.username} has reached Stage 2 (3,000 Chat XP) and earned the ROYAL RIBBIT role.`);
                 }
             }
-            console.log(`[Bot] Gave 15 XP to ${message.author.username}. Total: ${newChatXP}`);
+            console.log(`[Bot] Gave 0.5 XP to ${message.author.username}. Total: ${newChatXP}`);
         }
     } catch (error) {
         console.error('Error in messageCreate XP handler:', error);

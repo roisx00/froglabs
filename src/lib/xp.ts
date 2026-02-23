@@ -31,13 +31,13 @@ export async function assignDiscordRole(userId: string, roleId: string, io?: Ser
         const guild = await client.guilds.fetch(GUILD_ID);
         const member = await guild.members.fetch(userId);
         await member.roles.add(roleId);
-        console.log(`✅ [Discord Automation] Role ${roleId} assigned successfully to ${userId}`);
+        console.log(`[Discord Automation] Role ${roleId} assigned successfully to ${userId}`);
         if (io) {
             io.emit('roleUpdate', { userId, roleId, roleName: ROLE_ID_TO_NAME[roleId] });
         }
         return true;
     } catch (error) {
-        console.error(`❌ [Discord Automation] Failed to assign role ${roleId} to ${userId}:`, error);
+        console.error(`[Discord Automation] Failed to assign role ${roleId} to ${userId}:`, error);
         return false;
     }
 }
@@ -59,7 +59,7 @@ export async function checkAndPromoteRole(userId: string, io?: Server) {
         if (success) {
             app.chatRoleLevel = 'frog_runner';
             updated = true;
-            console.log(`🚀 [Promotion] ${app.username} -> FROG RUNNER (Discord Grinding 1000 XP)`);
+            console.log(`[Promotion] ${app.username} -> FROG RUNNER (Discord Grinding 1000 XP)`);
         }
     }
 
@@ -68,7 +68,7 @@ export async function checkAndPromoteRole(userId: string, io?: Server) {
         if (success) {
             app.chatRoleLevel = 'royal_ribbit';
             updated = true;
-            console.log(`🚀 [Promotion] ${app.username} -> ROYAL RIBBIT (Discord Grinding 3000 XP)`);
+            console.log(`[Promotion] ${app.username} -> ROYAL RIBBIT (Discord Grinding 3000 XP)`);
         }
     }
 
@@ -78,7 +78,7 @@ export async function checkAndPromoteRole(userId: string, io?: Server) {
         if (success) {
             app.xRoleAwarded = true;
             updated = true;
-            console.log(`🚀 [Promotion] ${app.username} -> CROAK KNIGHT (X Tasks 3000 XP)`);
+            console.log(`[Promotion] ${app.username} -> CROAK KNIGHT (X Tasks 3000 XP)`);
         }
     }
 

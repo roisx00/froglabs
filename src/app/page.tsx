@@ -28,7 +28,6 @@ export default function Home() {
           fetch('/api/application')
         ]);
         setMissions(await missionsRes.json());
-
         const appData = await appRes.json();
         setApp(appData || false);
       } catch (err) {
@@ -65,23 +64,47 @@ export default function Home() {
       } else {
         alert(result.error);
       }
-    } catch (err) {
-      alert('Submission failed');
+    } catch {
+      alert('Submission failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading || loadingSession) return <div className="container" style={{ textAlign: 'center', marginTop: '100px' }}>Loading...</div>;
+  // Loading states
+  if (loading || loadingSession) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+      <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', fontSize: '0.85rem', letterSpacing: '2px' }}>
+        LOADING SYSTEM...
+      </span>
+    </div>
+  );
 
+  // Not authenticated — hero / login
   if (!user) {
     return (
       <main className="no-scroll">
         <div className="container hero-container">
           <div className="hero">
             <img src="/img/frogs-gray-ensemble.png" alt="22 Frogs" className="frogs-img" />
-            <div>
-              <button onClick={() => signIn('discord')} className="btn-discord" style={{ border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>LOGIN WITH DISCORD</button>
+            <div style={{ textAlign: 'center' }}>
+              <p style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.72rem',
+                color: 'var(--text-muted)',
+                letterSpacing: '3px',
+                textTransform: 'uppercase',
+                marginBottom: '20px'
+              }}>
+                FrogLabs Whitelist Program — GTD Mint
+              </p>
+              <button
+                onClick={() => signIn('discord')}
+                className="btn-discord"
+                style={{ fontFamily: 'inherit' }}
+              >
+                Connect with Discord
+              </button>
             </div>
           </div>
         </div>
@@ -89,68 +112,189 @@ export default function Home() {
     );
   }
 
+  // Already applied — show dashboard
   if (app) {
     return <Dashboard initialUser={user} initialApp={app} initialMissions={missions} />;
   }
 
+  // Registration form
   const regMissions = missions.filter(m => m.location === 'registration');
 
   return (
-    <div className="container" style={{ paddingTop: '20px' }}>
-      <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <h1 style={{ fontSize: '2rem', marginBottom: '5px' }}>Welcome, {user.username}</h1>
-        <p style={{ color: '#666', fontWeight: 600 }}>Complete the tasks below to enter the whitelist</p>
-      </div>
+    <div style={{ paddingTop: '70px', paddingBottom: '60px', minHeight: '100vh' }}>
+      {/* Header */}
+      <header>
+        <div className="nav-brand">
+          <div className="logo-container">
+            <img src="/img/logo.png" alt="22 FROGS" style={{ height: '38px', width: '38px' }} />
+          </div>
+          <span className="nav-brand-text">22 Frogs / WL Registration</span>
+        </div>
+        <span style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.72rem',
+          color: 'var(--text-muted)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-green)', display: 'inline-block', boxShadow: '0 0 8px var(--accent-green)' }}></span>
+          Connected as {user.username}
+        </span>
+      </header>
 
-      <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-        <div className="glass-card" style={{ marginTop: '20px' }}>
-          <h2 className="gradient-text" style={{ textAlign: 'center', marginBottom: '5px' }}>Mission Onboarding</h2>
-          <p style={{ textAlign: 'center', color: '#666', fontSize: '0.9rem', marginBottom: '30px', fontWeight: 600 }}>Complete all directives to unlock mint eligibility</p>
+      <div className="container">
+        <div style={{ maxWidth: '640px', margin: '0 auto' }}>
+          {/* Page header */}
+          <div style={{ marginBottom: '28px' }}>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '4px' }}>
+              Whitelist Application
+            </h1>
+            <p style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.72rem',
+              color: 'var(--text-muted)',
+              letterSpacing: '1.5px',
+              textTransform: 'uppercase'
+            }}>
+              Complete all directives to submit your application for GTD Mint
+            </p>
+          </div>
 
-          <form onSubmit={handleSubmit}>
-            {regMissions.map((m, idx) => (
-              <div key={m.id} className="directive-card" style={{ marginBottom: '24px', padding: '24px', border: '2px solid #e5e7eb', borderRadius: '20px', background: '#fff' }}>
-                <span className="step-indicator" style={{ display: 'inline-block', background: '#f3f4f6', color: '#374151', fontSize: '0.75rem', fontWeight: 800, padding: '6px 12px', borderRadius: '100px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px', border: '2px solid #e5e7eb' }}>
-                  Directive 0{idx + 1}
-                </span>
-                <div className="task-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '15px', background: '#fafaf9', padding: '16px 20px', borderRadius: '16px', border: '2px solid #e5e7eb' }}>
-                  <div className="task-text" style={{ fontWeight: 700, fontSize: '1.1rem', color: '#111', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ color: '#6b7280', fontSize: '1.5rem', lineHeight: 1 }}>•</span>
-                    {m.title}
+          <div className="glass-card" style={{ marginTop: 0 }}>
+            <form onSubmit={handleSubmit}>
+              {/* Task Directives */}
+              {regMissions.map((m, idx) => (
+                <div key={m.id} className="directive-card">
+                  <span className="step-indicator">Directive 0{idx + 1}</span>
+                  <div className="task-row">
+                    <div className="task-text">
+                      <div className="task-dot"></div>
+                      {m.title}
+                    </div>
+                    <a
+                      href={m.link}
+                      target="_blank"
+                      className="btn-go"
+                    >
+                      Execute
+                    </a>
                   </div>
-                  <a href={m.link} target="_blank" className="btn-go" style={{ background: '#000', color: '#fff', padding: '10px 24px', borderRadius: '100px', textDecoration: 'none', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', flexShrink: 0 }}>
-                    INITIATE
-                  </a>
+                  {m.actionType === 'quote' && (
+                    <div className="input-group" style={{ marginTop: '18px', marginBottom: 0 }}>
+                      <label className="input-label">
+                        Quoted Tweet URL <span style={{ color: 'var(--accent-red)' }}>*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="quotedTweet"
+                        placeholder="https://x.com/your-username/status/..."
+                        required
+                      />
+                    </div>
+                  )}
+                  {m.actionType === 'comment' && (
+                    <div className="input-group" style={{ marginTop: '18px', marginBottom: 0 }}>
+                      <label className="input-label">
+                        Comment Link <span style={{ color: 'var(--accent-red)' }}>*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="commentedTweet"
+                        placeholder="https://x.com/your-username/status/..."
+                        required
+                      />
+                    </div>
+                  )}
                 </div>
-                {m.actionType === 'quote' && (
-                  <div className="input-group" style={{ marginTop: '20px', marginBottom: 0 }}>
-                    <label className="input-label">Your Quoted Tweet URL <span style={{ color: '#ef4444' }}>*</span></label>
-                    <input type="text" name="quotedTweet" placeholder="https://x.com/your-username/status/..." required style={{ marginBottom: 0 }} />
-                  </div>
-                )}
-                {m.actionType === 'comment' && (
-                  <div className="input-group" style={{ marginTop: '20px', marginBottom: 0 }}>
-                    <label className="input-label">Your Comment Link <span style={{ color: '#ef4444' }}>*</span></label>
-                    <input type="text" name="commentedTweet" placeholder="https://x.com/your-username/status/..." required style={{ marginBottom: 0 }} />
-                  </div>
-                )}
-              </div>
-            ))}
+              ))}
 
-            <div className="directive-card" style={{ background: '#f8fafc', borderColor: '#e2e8f0' }}>
-              <span className="step-indicator" style={{ background: '#111', color: '#fff', borderColor: '#111' }}>Final Step</span>
-              <div className="input-group" style={{ background: 'transparent', marginBottom: 0 }}>
-                <label className="input-label" style={{ fontSize: '1.1rem' }}>Destination Wallet Address <span style={{ color: '#ef4444' }}>*</span></label>
-                <input type="text" name="wallet" placeholder="0x..." required style={{ background: '#fff', border: '2px solid #cbd5e1' }} />
-                <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '10px', fontWeight: 600 }}>This address will be submitted for whitelist allocation.</p>
+              {/* Wallet */}
+              <div className="directive-card">
+                <span className="step-indicator final">Final Step</span>
+                <div className="input-group" style={{ marginBottom: 0 }}>
+                  <label className="input-label" style={{ fontSize: '0.75rem' }}>
+                    Destination Wallet Address <span style={{ color: 'var(--accent-red)' }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="wallet"
+                    placeholder="0x..."
+                    required
+                  />
+                  <p style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.68rem',
+                    color: 'var(--text-muted)',
+                    marginTop: '8px',
+                    lineHeight: 1.5
+                  }}>
+                    This address will be registered for whitelist allocation. Ensure it is correct before submitting.
+                  </p>
+                </div>
+              </div>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                className="btn-primary"
+                disabled={submitting}
+                style={{ marginTop: '8px' }}
+              >
+                {submitting ? 'Transmitting...' : 'Submit Application'}
+              </button>
+
+              <p style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.65rem',
+                color: 'var(--text-muted)',
+                textAlign: 'center',
+                marginTop: '14px',
+                letterSpacing: '1px'
+              }}>
+                SECURE CHANNEL — FORM DATA IS ENCRYPTED IN TRANSIT
+              </p>
+            </form>
+          </div>
+
+          {/* How to get WL mini guide */}
+          <div className="wl-guide" style={{ marginTop: '20px' }}>
+            <div className="wl-guide-title">Alternative Paths to Whitelist</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
+                <div style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.65rem',
+                  color: 'var(--accent-cyan)',
+                  fontWeight: 700,
+                  padding: '3px 8px',
+                  border: '1px solid rgba(56,189,248,0.3)',
+                  borderRadius: '4px',
+                  flexShrink: 0,
+                  marginTop: '1px'
+                }}>PATH B</div>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  <strong style={{ color: 'var(--text-primary)' }}>Discord Activity:</strong> Chat actively in the general Discord channel. Every 10 messages earns 5 XP. Reach 3,000 chat XP to earn the Royal Ribbit role.
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
+                <div style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.65rem',
+                  color: 'var(--accent-violet)',
+                  fontWeight: 700,
+                  padding: '3px 8px',
+                  border: '1px solid rgba(139,92,246,0.3)',
+                  borderRadius: '4px',
+                  flexShrink: 0,
+                  marginTop: '1px'
+                }}>PATH C</div>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  <strong style={{ color: 'var(--text-primary)' }}>Manual Review:</strong> Once you submit this application, the team will review it manually. High-quality applicants may be approved regardless of XP level.
+                </p>
               </div>
             </div>
-
-            <button type="submit" className="btn-primary" disabled={submitting} style={{ fontSize: '1.1rem', padding: '18px', marginTop: '10px' }}>
-              {submitting ? 'Submitting...' : 'Submit All Directives'}
-            </button>
-            <p style={{ fontSize: '0.75rem', color: '#999', textAlign: 'center', marginTop: '15px', fontWeight: 700 }}>SECURE TRANSMISSION CHANNEL | V2.0.1</p>
-          </form>
+          </div>
         </div>
       </div>
     </div>
