@@ -115,7 +115,7 @@ export default function Home() {
 
         {/* Footer */}
         <footer>
-          <span className="footer-text">Powered by Frog Labs</span>
+          <span className="footer-text">powered by 22frogs</span>
         </footer>
       </main>
     );
