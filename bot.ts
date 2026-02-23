@@ -37,10 +37,11 @@ const ROLES = {
     FROGFATHER: '1135129228183093308'
 };
 
-// 1 msg = 0.5 XP. 1-minute cooldown to prevent spam farming.
-const XP_PER_MESSAGE = 0.5;
-const XP_COOLDOWN_MS = 60 * 1000;
-const xpCooldowns = new Map<string, number>();
+// 10 messages = 5 XP. 3-second spam guard per user (prevents rapid-fire abuse).
+const MSGS_PER_XP_AWARD = 10;
+const XP_PER_AWARD = 5;
+const SPAM_GUARD_MS = 3_000;
+const spamGuard = new Map<string, number>();
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 async function announce(guild: any, msg: string) {
@@ -125,22 +126,36 @@ client.on('messageCreate', async (message) => {
 
     const userId = message.author.id;
     const now = Date.now();
-    const lastMsg = xpCooldowns.get(userId) || 0;
-    if (now - lastMsg < XP_COOLDOWN_MS) return;
-    xpCooldowns.set(userId, now);
+
+    // 3-second spam guard — ignores messages sent too rapidly
+    const lastMsg = spamGuard.get(userId) || 0;
+    if (now - lastMsg < SPAM_GUARD_MS) return;
+    spamGuard.set(userId, now);
 
     try {
         const userRef = db.collection('applications').doc(userId);
         const snap = await userRef.get();
-        if (!snap.exists) return; // Not registered in the whitelist system
+        if (!snap.exists) return; // Not in the whitelist system
 
         const data = snap.data()!;
-        const newChatXP = (data.chatXP || 0) + XP_PER_MESSAGE;
+        const newCount = (data.messageCount || 0) + 1;
+        const updates: Record<string, any> = { messageCount: newCount };
 
-        await userRef.update({ chatXP: newChatXP });
-        console.log(`[Bot] +${XP_PER_MESSAGE} XP → ${message.author.username} (total: ${newChatXP.toFixed(1)})`);
+        // Award 5 XP every 10 messages
+        const prevAwards = Math.floor((newCount - 1) / MSGS_PER_XP_AWARD);
+        const newAwards = Math.floor(newCount / MSGS_PER_XP_AWARD);
+        let newChatXP = data.chatXP || 0;
 
-        await checkPromotion(message.guild, userId, newChatXP, data.socialXP || 0, message.author.username);
+        if (newAwards > prevAwards) {
+            newChatXP += XP_PER_AWARD;
+            updates.chatXP = newChatXP;
+            console.log(`[Bot] 🎯 +${XP_PER_AWARD} XP → ${message.author.username} (msg #${newCount}, total XP: ${newChatXP})`);
+            await checkPromotion(message.guild, userId, newChatXP, data.socialXP || 0, message.author.username);
+        } else {
+            console.log(`[Bot] 💬 msg #${newCount} from ${message.author.username} (${MSGS_PER_XP_AWARD - (newCount % MSGS_PER_XP_AWARD)} msgs until next XP)`);
+        }
+
+        await userRef.update(updates);
     } catch (err) {
         console.error('[Bot] messageCreate error:', err);
     }
@@ -150,7 +165,7 @@ client.on('messageCreate', async (message) => {
 client.once('clientReady', () => {
     console.log(`✅ [Bot] Logged in as ${client.user?.tag}`);
     console.log(`📡 Serving guild: ${GUILD_ID}`);
-    console.log(`💬 XP rate: ${XP_PER_MESSAGE} XP/msg (1-min cooldown)`);
+    console.log(`💬 XP rate: +${XP_PER_AWARD} XP per ${MSGS_PER_XP_AWARD} messages (${SPAM_GUARD_MS / 1000}s spam guard)`);
     // Poll for pending roles from web server every 30 seconds
     setInterval(pollPendingRoles, 30_000);
 });
