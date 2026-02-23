@@ -4,31 +4,28 @@
    DESIGN TOKENS (REFURBISHED LIGHT TECH)
    ============================================================ */
 :root {
-  --bg-base: #CCCCCA;
-  --bg-surface: #D8D8D6;
+  --bg-base: #C4CCCF;
+  --bg-surface: #CED6D9;
   --bg-card: #FFFFFF;
   --bg-card-hover: #F7F7F5;
-  --border-subtle: rgba(10, 1, 1, 0.1);
-  --border-glow: rgba(10, 1, 1, 0.3);
+  --border-subtle: rgba(10, 1, 1, 0.08);
+  --border-glow: rgba(10, 1, 1, 0.2);
   --accent-primary: #4C4C4C;
   --accent-cyan: #0077B6;
-  /* Refined for light bg */
   --accent-violet: #6B5B95;
-  /* Refined for light bg */
   --accent-green: #2D6A4F;
   --accent-amber: #B07D05;
   --accent-red: #A4161A;
   --text-primary: #0A0101;
   --text-secondary: #333333;
   --text-muted: #666666;
-  --glow-subtle: 0 0 14px rgba(0, 0, 0, 0.05);
+  --glow-subtle: 0 4px 14px rgba(0, 0, 0, 0.04);
   --font-mono: 'Space Mono', monospace;
   --font-sans: 'Inter', sans-serif;
   --radius-sm: 6px;
-  /* Slightly sharper for tech feel on light bg */
   --radius-md: 12px;
   --radius-lg: 16px;
-  --transition: all 0.15s ease;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ============================================================
@@ -54,11 +51,11 @@ body {
   display: flex;
   flex-direction: column;
   line-height: 1.6;
-  /* Very subtle dark grid overlay to match reference precisely */
+  /* Extremely subtle dark grid overlay */
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
-  background-size: 50px 50px;
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
 }
 
 .no-scroll {
@@ -165,16 +162,18 @@ header {
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
+  animation: fadeInUp 0.8s ease-out forwards;
 }
 
 .hero-title {
   font-family: 'Impact', 'Arial Narrow Bold', sans-serif;
-  font-size: clamp(4rem, 10vw, 8rem);
-  line-height: 0.9;
-  letter-spacing: -2px;
+  font-size: clamp(4rem, 10vw, 8.5rem);
+  line-height: 0.85;
+  letter-spacing: -3px;
   color: #000000;
   text-transform: uppercase;
-  margin-bottom: 30px;
+  margin-bottom: 35px;
+  text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.05);
 }
 
 .frogs-img-container {
@@ -182,6 +181,7 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
+  animation: fadeInUp 1s ease-out forwards;
 }
 
 .frogs-img {
@@ -189,6 +189,23 @@ header {
   max-width: 800px;
   height: auto;
   object-fit: contain;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.frogs-img:hover {
+  transform: scale(1.03);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .btn-discord {

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<body style="margin: 0;">
+    <canvas id="canvas"></canvas>
+    <img src="public/img/frogs-gray-ensemble.png" id="img" style="display:none;">
+    <script>
+        const img = document.getElementById('img');
+        img.onload = () => {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            // Sample top-left pixel
+            const pixel = ctx.getImageData(10, 10, 1, 1).data;
+            const hex = "#" + ("000000" + ((pixel[0] << 16) | (pixel[1] << 8) | pixel[2]).toString(16)).slice(-6);
+            const div = document.createElement('div');
+            div.id = 'color-result';
+            div.textContent = hex;
+            document.body.appendChild(div);
+        };
+    </script>
+</body>
+
+</html>
