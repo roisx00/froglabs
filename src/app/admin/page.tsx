@@ -81,6 +81,57 @@ export default function AdminPanel() {
         await fetchAll();
     };
 
+    const exportCSV = () => {
+        const ROLE_ORDER = [
+            { id: '1135129228183093308', name: 'FROGFATHER' },
+            { id: '1155236969534726269', name: 'ROYAL RIBBIT' },
+            { id: '1149718327388811314', name: 'CROAK KNIGHT' },
+            { id: '1153652478508802068', name: 'FROG RUNNER' },
+            { id: '1135140834581414088', name: 'TADPOLE' },
+        ];
+
+        const rows: string[] = ['Role,Discord Username,Discord ID,Wallet Address,X Handle,Chat XP,Task XP,Total XP,Status,Submitted At'];
+
+        for (const role of ROLE_ORDER) {
+            const group = apps.filter(a => a.currentLevelRole === role.id);
+            if (group.length === 0) continue;
+            rows.push(`\n=== ${role.name} (${group.length}) ===`);
+            for (const a of group) {
+                const chatXP = a.chatXP || 0;
+                const socialXP = a.socialXP || 0;
+                rows.push([
+                    role.name,
+                    `"${a.username || ''}"`,
+                    a.id || '',
+                    `"${a.wallet || ''}"`,
+                    `"${a.xUsername || ''}"`,
+                    chatXP,
+                    socialXP,
+                    chatXP + socialXP,
+                    a.status || 'pending',
+                    `"${a.submittedAt || ''}"`
+                ].join(','));
+            }
+        }
+
+        // Also add a GTD MINT section (approved only)
+        const approved = apps.filter(a => a.status === 'approved');
+        if (approved.length > 0) {
+            rows.push(`\n=== GTD MINT APPROVED (${approved.length}) ===`);
+            for (const a of approved) {
+                rows.push(`"${a.username || ''}",${a.id || ''},"${a.wallet || ''}","${a.xUsername || ''}",${a.status}`);
+            }
+        }
+
+        const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `froglabs-wallets-${new Date().toISOString().slice(0, 10)}.csv`;
+        link.click();
+        URL.revokeObjectURL(url);
+    };
+
     if (loading) return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
             <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', fontSize: '0.85rem', letterSpacing: '2px' }}>
@@ -254,6 +305,17 @@ export default function AdminPanel() {
                 </div>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                     <span className="role-tag role-wl">Bot Active</span>
+                    <button
+                        onClick={exportCSV}
+                        style={{
+                            fontFamily: 'var(--font-mono)', fontSize: '0.62rem', fontWeight: 700,
+                            padding: '6px 14px', borderRadius: '4px', cursor: 'pointer',
+                            background: 'rgba(45,106,79,0.15)', border: '1.5px solid var(--accent-green)',
+                            color: 'var(--accent-green)', textTransform: 'uppercase', letterSpacing: '1px'
+                        }}
+                    >
+                        ↓ Export CSV
+                    </button>
                     <button
                         onClick={() => { localStorage.removeItem('isAdmin'); window.location.href = '/'; }}
                         className="btn-logout"
