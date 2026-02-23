@@ -28,12 +28,12 @@
   },
   {
     "id": "t1771682365115",
-    "title": "Test Quote Mission",
-    "link": "https://x.com/test/status/1",
+    "title": "Comment on Transmission",
+    "link": "https://x.com/internxbt",
     "xpReward": 50,
     "type": "social",
     "location": "registration",
-    "actionType": "quote"
+    "actionType": "comment"
   },
   {
     "id": "t1771684313667",

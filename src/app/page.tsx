@@ -14,6 +14,21 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
+  const [clickedMissions, setClickedMissions] = useState<string[]>([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('clickedMissions');
+    if (saved) setClickedMissions(JSON.parse(saved));
+  }, []);
+
+  const handleMissionClick = (id: string) => {
+    if (!clickedMissions.includes(id)) {
+      const newClicked = [...clickedMissions, id];
+      setClickedMissions(newClicked);
+      localStorage.setItem('clickedMissions', JSON.stringify(newClicked));
+    }
+  };
+
   useEffect(() => {
     if (loadingSession) return;
     if (!user) {
@@ -187,9 +202,10 @@ export default function Home() {
                     <a
                       href={m.link}
                       target="_blank"
-                      className="btn-go"
+                      className={`btn-go ${clickedMissions.includes(m.id) ? 'status-checking' : ''}`}
+                      onClick={() => handleMissionClick(m.id)}
                     >
-                      Checking manually
+                      {clickedMissions.includes(m.id) ? 'Checking manually' : 'Execute'}
                     </a>
                   </div>
                   {m.actionType === 'quote' && (
