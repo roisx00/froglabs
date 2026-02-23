@@ -273,7 +273,9 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                         <strong>Note:</strong> All three paths contribute independently. Reaching XP thresholds via Discord chat or X tasks grants automatic role upgrades. Manual approval covers the final GTD Mint allocation regardless of XP level. Grinding both paths maximizes your chances.
                     </div>
                 </div>
+                <footer>
+                    <span className="footer-text">powered by 22frogs</span>
+                </footer>
             </div>
-        </div>
-    );
+            );
 }

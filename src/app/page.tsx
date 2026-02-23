@@ -309,6 +309,10 @@ export default function Home() {
           </div>
         </div>
       </div>
+      {/* Footer */}
+      <footer>
+        <span className="footer-text">powered by 22frogs</span>
+      </footer>
     </div>
   );
 }
