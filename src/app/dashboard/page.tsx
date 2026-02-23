@@ -6,7 +6,6 @@ import { signOut } from 'next-auth/react';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-// Role hierarchy display names
 const ROLE_DISPLAY: Record<string, string> = {
     '1135140834581414088': 'TADPOLE',
     '1153652478508802068': 'FROG RUNNER',
@@ -15,33 +14,35 @@ const ROLE_DISPLAY: Record<string, string> = {
     '1135129228183093308': 'FROGFATHER'
 };
 
-// Discord XP rate: 10 messages = 5 XP => 0.5 XP per message
-// Thresholds remain the same in XP terms
-const DISCORD_THRESHOLDS = {
-    FROG_RUNNER: 1000, // XP required
-    ROYAL_RIBBIT: 3000  // XP required
-};
-
+const DISCORD_THRESHOLDS = { FROG_RUNNER: 1000, ROYAL_RIBBIT: 3000 };
 const X_TASKS_THRESHOLD = 3000;
+const TEN_MINUTES = 10 * 60 * 1000;
 
-function formatXP(n: number) {
-    return n.toLocaleString();
-}
+function formatXP(n: number) { return n.toLocaleString(); }
 
 export default function Dashboard({ initialUser, initialApp, initialMissions }: any = {}) {
     const [user, setUser] = useState<any>(initialUser || null);
     const [missions, setMissions] = useState<any[]>(initialMissions || []);
+    const [loading, setLoading] = useState(!initialUser && !initialApp);
+    // missionStates: { [missionId]: { status: 'checking' | 'done', startTime: number } }
+    const [missionStates, setMissionStates] = useState<Record<string, any>>({});
+    const [tick, setTick] = useState(0); // used to re-render timers
+
     const { data: appData } = useSWR('/api/application', fetcher, {
         fallbackData: initialApp,
-        refreshInterval: 3000
+        refreshInterval: 5000
     });
-
     const app = appData || initialApp;
-    const [loading, setLoading] = useState(!initialUser && !app);
 
+    // Load missionStates from localStorage
+    useEffect(() => {
+        const saved = localStorage.getItem('dash_mission_states');
+        if (saved) setMissionStates(JSON.parse(saved));
+    }, []);
+
+    // Fetch user/missions if not passed as props
     useEffect(() => {
         if (initialUser) return;
-
         const fetchData = async () => {
             try {
                 const [userRes, missionsRes] = await Promise.all([
@@ -51,14 +52,58 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                 setUser(await userRes.json());
                 setMissions(await missionsRes.json());
             } catch (err) {
-                console.error('Failed to fetch dashboard data:', err);
+                console.error('Dashboard fetch failed:', err);
             } finally {
                 setLoading(false);
             }
         };
-
         fetchData();
+    }, [initialUser]);
+
+    // Timer tick every second
+    useEffect(() => {
+        const interval = setInterval(() => setTick(t => t + 1), 1000);
+        return () => clearInterval(interval);
     }, []);
+
+    // Check if any 'checking' timers have expired - reward XP and mark done
+    useEffect(() => {
+        const now = Date.now();
+        let changed = false;
+        const updated = { ...missionStates };
+
+        Object.entries(updated).forEach(([id, state]: [string, any]) => {
+            if (state.status === 'checking' && now - state.startTime >= TEN_MINUTES) {
+                updated[id] = { status: 'done', startTime: state.startTime };
+                changed = true;
+                // Fire-and-forget XP reward
+                const mission = missions.find((m: any) => m.id === id);
+                if (mission) {
+                    fetch('/api/missions/complete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ missionId: id, xpReward: mission.xpReward })
+                    }).catch(() => { });
+                }
+            }
+        });
+
+        if (changed) {
+            setMissionStates(updated);
+            localStorage.setItem('dash_mission_states', JSON.stringify(updated));
+        }
+    }, [tick, missionStates, missions]);
+
+    const handleMissionExecute = (m: any) => {
+        // Only start timer if not already started
+        if (missionStates[m.id]) return;
+        const newState = {
+            ...missionStates,
+            [m.id]: { status: 'checking', startTime: Date.now() }
+        };
+        setMissionStates(newState);
+        localStorage.setItem('dash_mission_states', JSON.stringify(newState));
+    };
 
     if (loading) return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
@@ -68,23 +113,19 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
 
     if (!user) return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-            <a href="/auth/discord" style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>AUTHENTICATE TO CONTINUE</a>
+            <a href="/" style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>AUTHENTICATE TO CONTINUE</a>
         </div>
     );
 
-    // --- XP Data ---
+    // XP data
     const socialXP = app?.socialXP || 0;
     const chatXP = app?.chatXP || 0;
     const totalXP = chatXP + socialXP;
 
-    // X Tasks progress
     const xTasksProgress = Math.min((socialXP / X_TASKS_THRESHOLD) * 100, 100);
     const xTasksComplete = socialXP >= X_TASKS_THRESHOLD;
-    const xTasksLabel = xTasksComplete
-        ? 'CROAK KNIGHT UNLOCKED'
-        : `${formatXP(socialXP)} / ${formatXP(X_TASKS_THRESHOLD)} XP`;
+    const xTasksLabel = xTasksComplete ? 'CROAK KNIGHT UNLOCKED' : `${formatXP(socialXP)} / ${formatXP(X_TASKS_THRESHOLD)} XP`;
 
-    // Discord chat progress (multi-stage)
     let discordLabel: string, discordProgress: number, discordBarClass: string;
     if (chatXP < DISCORD_THRESHOLDS.FROG_RUNNER) {
         discordLabel = `${formatXP(chatXP)} / ${formatXP(DISCORD_THRESHOLDS.FROG_RUNNER)} XP - Stage 1`;
@@ -100,24 +141,20 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
         discordBarClass = 'complete';
     }
 
-    // --- Application status ---
     const appStatus = app?.status;
     const isApproved = appStatus === 'approved';
     const isPending = appStatus === 'pending';
-
     const statusClass = isApproved ? 'approved' : isPending ? 'pending' : 'guest';
     const statusText = isApproved ? 'GTD MINT — APPROVED' : isPending ? 'APPLICATION UNDER REVIEW' : 'NO APPLICATION FILED';
 
-    // --- Current Role ---
     const currentRoleId = app?.currentLevelRole || '1135140834581414088';
     const currentRoleName = ROLE_DISPLAY[currentRoleId] || 'TADPOLE';
 
-    // --- Missions ---
     const dashboardMissions = missions.filter((m: any) => m.location === 'dashboard');
+    const alreadyCompleted: string[] = app?.completedMissions || [];
 
     return (
         <div style={{ paddingTop: '70px', paddingBottom: '60px' }}>
-            {/* ——— HEADER ——— */}
             <header>
                 <div className="nav-brand">
                     <div className="logo-container">
@@ -129,7 +166,6 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
             </header>
 
             <div className="container">
-                {/* ——— PAGE TITLE ——— */}
                 <div style={{ marginBottom: '28px' }}>
                     <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '4px' }}>
                         {user.username}
@@ -139,27 +175,17 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                     </p>
                 </div>
 
-                {/* ——— STAT CARDS ——— */}
+                {/* Stat Cards */}
                 <div className="dashboard-grid">
-                    {/* Status card */}
                     <div className="stat-card">
                         <div className="stat-label">Application Status</div>
-                        <div>
-                            <div className={`status-banner ${statusClass}`} style={{ padding: '10px 14px', marginBottom: '0' }}>
-                                <div className={`status-indicator ${statusClass}`}></div>
-                                <span style={{
-                                    fontFamily: 'var(--font-mono)',
-                                    fontSize: '0.78rem',
-                                    fontWeight: 700,
-                                    color: isApproved ? 'var(--accent-green)' : isPending ? 'var(--accent-amber)' : 'var(--text-secondary)'
-                                }}>
-                                    {statusText}
-                                </span>
-                            </div>
+                        <div className={`status-banner ${statusClass}`} style={{ padding: '10px 14px' }}>
+                            <div className={`status-indicator ${statusClass}`}></div>
+                            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, color: isApproved ? 'var(--accent-green)' : isPending ? 'var(--accent-amber)' : 'var(--text-secondary)' }}>
+                                {statusText}
+                            </span>
                         </div>
                     </div>
-
-                    {/* Current Role card */}
                     <div className="stat-card">
                         <div className="stat-label">Current Role</div>
                         <div className="stat-value" style={{ fontSize: '1.1rem' }}>
@@ -167,26 +193,20 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                         </div>
                         <div className="stat-sub">Active Discord rank</div>
                     </div>
-
-                    {/* Total XP card */}
                     <div className="stat-card">
                         <div className="stat-label">Total XP Earned</div>
-                        <div className="stat-value gradient-text">{formatXP(totalXP)}</div>
+                        <div className="stat-value">{formatXP(totalXP)}</div>
                         <div className="stat-sub">Tasks: {formatXP(socialXP)} &middot; Chat: {formatXP(chatXP)}</div>
                     </div>
                 </div>
 
-                {/* ——— XP PROGRESS ——— */}
+                {/* XP Progress */}
                 <div className="xp-container">
                     <div className="xp-section-title">XP Progress</div>
-
-                    {/* X Tasks */}
                     <div className="xp-row">
                         <div className="xp-header">
                             <div className="xp-label">X Tasks Grind</div>
-                            <div className="xp-count" style={{ color: xTasksComplete ? 'var(--accent-green)' : 'var(--accent-cyan)' }}>
-                                {xTasksLabel}
-                            </div>
+                            <div className="xp-count" style={{ color: xTasksComplete ? 'var(--accent-green)' : 'var(--accent-cyan)' }}>{xTasksLabel}</div>
                         </div>
                         <div className="xp-bar-bg">
                             <div className={`xp-bar-fill ${xTasksComplete ? 'complete' : 'social'}`} style={{ width: `${xTasksProgress}%` }}></div>
@@ -195,14 +215,10 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                             Reach 3,000 XP to unlock Croak Knight role
                         </div>
                     </div>
-
-                    {/* Discord Chat */}
                     <div className="xp-row">
                         <div className="xp-header">
                             <div className="xp-label">Discord Chat Grind</div>
-                            <div className="xp-count" style={{ color: discordBarClass === 'complete' ? 'var(--accent-green)' : '#7c85f5' }}>
-                                {discordLabel}
-                            </div>
+                            <div className="xp-count" style={{ color: discordBarClass === 'complete' ? 'var(--accent-green)' : '#7c85f5' }}>{discordLabel}</div>
                         </div>
                         <div className="xp-bar-bg">
                             <div className={`xp-bar-fill ${discordBarClass}`} style={{ width: `${discordProgress}%` }}></div>
@@ -213,66 +229,83 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                     </div>
                 </div>
 
-                {/* ——— DASHBOARD MISSIONS ——— */}
+                {/* Dashboard Missions */}
                 {dashboardMissions.length > 0 && (
                     <div className="mission-card">
                         <div className="mission-section-title">Active X Tasks</div>
-                        {dashboardMissions.map((m: any) => (
-                            <div key={m.id} className="mission-item">
-                                <div className="mission-info">
-                                    <h4>{m.title}</h4>
-                                    <p>{m.type === 'social' ? 'X Intelligence Mission' : 'Community Task'}</p>
+                        {dashboardMissions.map((m: any) => {
+                            const state = missionStates[m.id];
+                            const isCompletedInDb = alreadyCompleted.includes(m.id);
+                            const isDone = state?.status === 'done' || isCompletedInDb;
+                            const isChecking = !isDone && state?.status === 'checking';
+
+                            let countdownLabel = '';
+                            if (isChecking && state?.startTime) {
+                                const remaining = Math.max(0, TEN_MINUTES - (Date.now() - state.startTime));
+                                const mins = Math.floor(remaining / 60000);
+                                const secs = Math.floor((remaining % 60000) / 1000);
+                                countdownLabel = `${mins}:${secs.toString().padStart(2, '0')}`;
+                            }
+
+                            return (
+                                <div key={m.id} className="mission-item">
+                                    <div className="mission-info">
+                                        <h4>{m.title}</h4>
+                                        <p>{m.type === 'social' ? 'X Intelligence Mission' : 'Community Task'}</p>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+                                        <div className="mission-reward">+{m.xpReward} XP</div>
+                                        {isDone ? (
+                                            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 700, color: 'var(--accent-green)' }}>
+                                                DONE ✓
+                                            </span>
+                                        ) : isChecking ? (
+                                            <span className="status-checking" style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)' }}>
+                                                Checking manually ({countdownLabel})
+                                            </span>
+                                        ) : (
+                                            <a
+                                                href={m.link}
+                                                target="_blank"
+                                                className="btn-go"
+                                                onClick={() => handleMissionExecute(m)}
+                                            >
+                                                Execute
+                                            </a>
+                                        )}
+                                    </div>
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-                                    <div className="mission-reward">+{m.xpReward} XP</div>
-                                    <a href={m.link} target="_blank" className="btn-go">Execute</a>
-                                </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
 
-                {/* ——— HOW TO GET WL GUIDE ——— */}
+                {/* How to Get WL Guide */}
                 <div className="wl-guide">
                     <div className="wl-guide-title">How to Secure a GTD Mint Whitelist</div>
-
                     <div className="wl-path-grid">
                         <div className="wl-path-card">
                             <h4>Path A — X Tasks</h4>
-                            <p>
-                                Complete all active X tasks on the dashboard. Each task contributes XP toward your Social score.
-                                Reach <strong style={{ color: 'var(--text-primary)' }}>3,000 Social XP</strong> to automatically unlock the Croak Knight role.
-                            </p>
+                            <p>Complete active X tasks on the dashboard. Reach <strong style={{ color: 'var(--text-primary)' }}>3,000 Social XP</strong> to unlock the Croak Knight role.</p>
                         </div>
                         <div className="wl-path-card">
                             <h4>Path B — Discord Activity</h4>
-                            <p>
-                                Send messages in the general Discord server chat. Every
-                                <strong style={{ color: 'var(--text-primary)' }}> 10 messages earns 5 XP</strong>. Accumulate
-                                <strong style={{ color: 'var(--text-primary)' }}> 1,000 XP</strong> for Frog Runner and
-                                <strong style={{ color: 'var(--text-primary)' }}> 3,000 XP</strong> for Royal Ribbit.
-                            </p>
+                            <p>Chat in Discord. Every <strong style={{ color: 'var(--text-primary)' }}>10 messages earns 5 XP</strong>. Reach 1,000 XP for Frog Runner and 3,000 XP for Royal Ribbit.</p>
                         </div>
                         <div className="wl-path-card">
                             <h4>Path C — Submit Application</h4>
-                            <p>
-                                Submit your application with your wallet address and proof of tasks. Applications are reviewed manually by the team and can be approved at any time.
-                            </p>
+                            <p>Submit your application with wallet address and proof of tasks. The team reviews and approves at any time.</p>
                         </div>
                         <div className="wl-path-card">
                             <h4>Manual Approval</h4>
-                            <p>
-                                The team reserves the right to approve applications directly.
-                                If your application shows <strong style={{ color: 'var(--accent-amber)' }}>UNDER REVIEW</strong>, our team will action it shortly.
-                                Approved accounts receive the GTD Mint designation immediately.
-                            </p>
+                            <p>If your application shows <strong style={{ color: 'var(--accent-amber)' }}>UNDER REVIEW</strong>, our team will action it shortly. Approved accounts receive GTD Mint immediately.</p>
                         </div>
                     </div>
-
                     <div className="wl-note">
-                        <strong>Note:</strong> All three paths contribute independently. Reaching XP thresholds via Discord chat or X tasks grants automatic role upgrades. Manual approval covers the final GTD Mint allocation regardless of XP level. Grinding both paths maximizes your chances.
+                        <strong>Note:</strong> All paths contribute independently. XP thresholds grant automatic role upgrades. Manual approval covers final GTD Mint allocation.
                     </div>
                 </div>
+
                 <footer>
                     <span className="footer-text">powered by 22frogs</span>
                 </footer>
