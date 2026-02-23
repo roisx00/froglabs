@@ -54,11 +54,11 @@ body {
   display: flex;
   flex-direction: column;
   line-height: 1.6;
-  /* Subtle dark grid overlay for tech feel on light bg */
+  /* Very subtle dark grid overlay to match reference precisely */
   background-image:
-    linear-gradient(rgba(10, 1, 1, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(10, 1, 1, 0.02) 1px, transparent 1px);
-  background-size: 30px 30px;
+    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
 }
 
 .no-scroll {
@@ -195,24 +195,50 @@ header {
   display: inline-block;
   background: #4C4C4C;
   color: #FFFFFF;
-  padding: 12px 32px;
+  padding: 16px 48px;
+  /* Larger padding */
   font-family: var(--font-sans);
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  /* Larger font */
+  font-weight: 700;
   text-decoration: none;
   border: none;
   border-radius: 50px;
   /* Pill shape */
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .btn-discord:hover {
-  opacity: 0.9;
+  background: #333333;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .btn-discord:active {
-  transform: scale(0.98);
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  width: 100%;
+  padding: 40px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-text {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 /* ============================================================

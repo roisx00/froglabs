@@ -108,10 +108,15 @@ export default function Home() {
               </button>
             </div>
             <div className="frogs-img-container">
-              <img src="/img/frogs-gray-ensemble.png" alt="22 Frogs" className="frogs-img" />
+              <img src="/img/frogs-clean.png" alt="22 Frogs" className="frogs-img" />
             </div>
           </div>
         </div>
+
+        {/* Footer */}
+        <footer>
+          <span className="footer-text">Powered by Frog Labs</span>
+        </footer>
       </main>
     );
   }
