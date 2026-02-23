@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Dashboard from './dashboard/page';
-import { useSession, signIn } from 'next-auth/react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -134,17 +134,20 @@ export default function Home() {
           </div>
           <span className="nav-brand-text">22 Frogs / WL Registration</span>
         </div>
-        <span style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.72rem',
-          color: 'var(--text-muted)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px'
-        }}>
-          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-green)', display: 'inline-block', boxShadow: '0 0 8px var(--accent-green)' }}></span>
-          Connected as {user.username}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <span style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.72rem',
+            color: 'var(--text-muted)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-green)', display: 'inline-block', boxShadow: '0 0 8px var(--accent-green)' }}></span>
+            Connected as {user.username}
+          </span>
+          <button onClick={() => signOut()} className="btn-logout">Sign Out</button>
+        </div>
       </header>
 
       <div className="container">
