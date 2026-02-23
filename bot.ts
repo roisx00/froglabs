@@ -147,7 +147,7 @@ client.on('messageCreate', async (message) => {
 });
 
 // ─── Ready ────────────────────────────────────────────────────────────────────
-client.once('ready', () => {
+client.once('clientReady', () => {
     console.log(`✅ [Bot] Logged in as ${client.user?.tag}`);
     console.log(`📡 Serving guild: ${GUILD_ID}`);
     console.log(`💬 XP rate: ${XP_PER_MESSAGE} XP/msg (1-min cooldown)`);
