@@ -897,3 +897,30 @@ tbody td {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
+
+@keyframes blink-red {
+  0% {
+    color: var(--accent-red);
+    opacity: 1;
+    text-shadow: 0 0 8px rgba(164, 22, 26, 0.4);
+  }
+
+  50% {
+    color: var(--accent-red);
+    opacity: 0.4;
+    text-shadow: none;
+  }
+
+  100% {
+    color: var(--accent-red);
+    opacity: 1;
+    text-shadow: 0 0 8px rgba(164, 22, 26, 0.4);
+  }
+}
+
+.status-checking {
+  color: var(--accent-red) !important;
+  font-weight: 700;
+  animation: blink-red 1.5s ease-in-out infinite;
+  letter-spacing: 0.5px;
+}
