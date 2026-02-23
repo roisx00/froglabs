@@ -189,7 +189,7 @@ export default function Home() {
                       target="_blank"
                       className="btn-go"
                     >
-                      Execute
+                      Checking manually
                     </a>
                   </div>
                   {m.actionType === 'quote' && (
