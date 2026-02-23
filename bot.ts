@@ -37,10 +37,10 @@ const ROLES = {
     FROGFATHER: '1135129228183093308'
 };
 
-// 10 messages = 5 XP. 3-second spam guard per user (prevents rapid-fire abuse).
+// 10 messages = 5 XP. 20-second cooldown per user between counted messages.
 const MSGS_PER_XP_AWARD = 10;
 const XP_PER_AWARD = 5;
-const SPAM_GUARD_MS = 3_000;
+const SPAM_GUARD_MS = 20_000;
 const spamGuard = new Map<string, number>();
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
