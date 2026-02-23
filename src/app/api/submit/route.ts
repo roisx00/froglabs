@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
-import { checkAndPromoteRole, ROLES, assignDiscordRole } from '@/lib/xp';
+import { ROLES } from '@/lib/xp';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth/[...nextauth]/route';
 
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
         const userId = (session.user as any).id;
         const data = await req.json();
-        const { wallet, quotedTweet, commentedTweet, username } = data;
+        const { wallet, quotedTweet, commentedTweet, username, xUsername } = data;
 
         const userRef = db.collection('applications').doc(userId);
         const doc = await userRef.get();
@@ -29,21 +29,20 @@ export async function POST(req: NextRequest) {
             username,
             id: userId,
             wallet,
-            xUsername: 'extracted_from_client', // We'll handle extraction or just store raw
-            quotedTweet,
-            commentedTweet,
+            xUsername: xUsername || '',
+            quotedTweet: quotedTweet || '',
+            commentedTweet: commentedTweet || '',
             status: 'pending',
             chatXP: 0,
             socialXP: 50,
             completedMissions: regMissions,
             submittedAt: new Date().toISOString(),
-            currentLevelRole: ROLES.TADPOLE
+            currentLevelRole: ROLES.TADPOLE,
+            // Bot will pick this up within 30 seconds and assign the Tadpole role
+            pendingRoleId: ROLES.TADPOLE
         };
 
         await userRef.set(initialEntry);
-
-        // Initial role assignment (Async)
-        assignDiscordRole(userId, ROLES.TADPOLE);
 
         return NextResponse.json({ success: true, app: initialEntry });
     } catch (error) {
