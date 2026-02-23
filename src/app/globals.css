@@ -156,8 +156,16 @@ header {
   padding: 40px 0;
 }
 
-.hero-content {
+/* Left column: title + button stacked on desktop */
+.hero-left {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.hero-content {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -209,33 +217,59 @@ header {
 }
 
 .btn-discord {
-  display: inline-block;
-  background: #4C4C4C;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #1a1a1a;
   color: #FFFFFF;
-  padding: 16px 48px;
-  /* Larger padding */
+  padding: 16px 42px;
   font-family: var(--font-sans);
-  font-size: 1.2rem;
-  /* Larger font */
+  font-size: 1.05rem;
   font-weight: 700;
+  letter-spacing: 0.5px;
   text-decoration: none;
-  border: none;
+  border: 2px solid #1a1a1a;
   border-radius: 50px;
-  /* Pill shape */
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18), 0 1px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-discord::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(88, 101, 242, 0.15) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.25s;
 }
 
 .btn-discord:hover {
-  background: #333333;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  background: #000;
+  border-color: #000;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22), 0 2px 6px rgba(88, 101, 242, 0.15);
+}
+
+.btn-discord:hover::before {
+  opacity: 1;
 }
 
 .btn-discord:active {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* Desktop: button shows inside hero-content column */
+.hero-btn-desktop {
+  display: inline-flex;
+}
+
+/* Mobile-only button: hidden on desktop */
+.hero-btn-mobile {
+  display: none;
 }
 
 /* ============================================================
@@ -841,13 +875,19 @@ tbody td {
   .hero {
     flex-direction: column;
     text-align: center;
-    gap: 20px;
-    padding: 20px 0;
+    gap: 8px;
+    padding: 16px 0;
   }
 
   .hero-content {
     align-items: center;
     order: 1;
+    width: 100%;
+  }
+
+  /* Hide desktop button on mobile */
+  .hero-btn-desktop {
+    display: none;
   }
 
   .frogs-img-container {
@@ -861,9 +901,26 @@ tbody td {
     max-width: 100%;
   }
 
+  /* Show mobile button below image */
+  .hero-btn-mobile {
+    display: flex;
+    justify-content: center;
+    order: 3;
+    width: 100%;
+    padding-top: 8px;
+  }
+
+  .hero-btn-mobile .btn-discord {
+    width: 82%;
+    max-width: 320px;
+    justify-content: center;
+    font-size: 1.1rem;
+    padding: 15px 32px;
+  }
+
   .hero-title {
     font-size: clamp(3.5rem, 14vw, 5.5rem);
-    margin-bottom: 22px;
+    margin-bottom: 10px;
   }
 
   .dashboard-grid {

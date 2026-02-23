@@ -111,19 +111,23 @@ export default function Home() {
 
         <div className="container hero-container">
           <div className="hero">
+            {/* title — always order:1 on mobile */}
             <div className="hero-content">
-              <h1 className="hero-title">
-                FROG<br />ROYALE
-              </h1>
-              <button
-                onClick={() => signIn('discord')}
-                className="btn-discord"
-              >
+              <h1 className="hero-title">FROG<br />ROYALE</h1>
+              {/* Desktop only button (inside content column) */}
+              <button onClick={() => signIn('discord')} className="btn-discord hero-btn-desktop">
                 Connect Discord
               </button>
             </div>
+            {/* image — order:2 on mobile */}
             <div className="frogs-img-container">
               <img src="/img/frogs-gray-ensemble.png" alt="22 Frogs" className="frogs-img" />
+            </div>
+            {/* Mobile-only button — order:3, hidden on desktop */}
+            <div className="hero-btn-mobile">
+              <button onClick={() => signIn('discord')} className="btn-discord">
+                Connect Discord
+              </button>
             </div>
           </div>
         </div>
