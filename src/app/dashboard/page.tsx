@@ -277,5 +277,6 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                     <span className="footer-text">powered by 22frogs</span>
                 </footer>
             </div>
-            );
+        </div>
+    );
 }
