@@ -84,27 +84,31 @@ export default function Home() {
   if (!user) {
     return (
       <main className="no-scroll">
+        {/* Header */}
+        <header>
+          <div className="nav-brand">
+            <div className="logo-container">
+              <img src="/img/logo.png" alt="22 FROGS" style={{ height: '36px', width: '36px' }} />
+            </div>
+            <span className="nav-brand-text">22FROG</span>
+          </div>
+        </header>
+
         <div className="container hero-container">
           <div className="hero">
-            <img src="/img/frogs-gray-ensemble.png" alt="22 Frogs" className="frogs-img" />
-            <div style={{ textAlign: 'center' }}>
-              <p style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.72rem',
-                color: 'var(--text-muted)',
-                letterSpacing: '3px',
-                textTransform: 'uppercase',
-                marginBottom: '20px'
-              }}>
-                FrogLabs Whitelist Program — GTD Mint
-              </p>
+            <div className="hero-content">
+              <h1 className="hero-title">
+                FROG<br />ROYALE
+              </h1>
               <button
                 onClick={() => signIn('discord')}
                 className="btn-discord"
-                style={{ fontFamily: 'inherit' }}
               >
-                Connect with Discord
+                Connect Discord
               </button>
+            </div>
+            <div className="frogs-img-container">
+              <img src="/img/frogs-gray-ensemble.png" alt="22 Frogs" className="frogs-img" />
             </div>
           </div>
         </div>
