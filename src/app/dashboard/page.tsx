@@ -11,7 +11,7 @@ const ROLE_DISPLAY: Record<string, string> = {
     '1153652478508802068': 'RIBBIT RUNNER',
     '1149718327388811314': 'CROAK KNIGHT',
     '1155236969534726269': 'ROYAL RIBBIT',
-    '1135129228183093308': 'FROGFATHER'
+    '1135129228183093308': 'RIBBITFATHER'
 };
 
 const DISCORD_THRESHOLDS = { RIBBIT_RUNNER: 1000, ROYAL_RIBBIT: 3000 };
@@ -160,7 +160,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                     <div className="logo-container">
                         <img src="/img/logo.png" alt="22 RIBBITS" style={{ height: '38px', width: '38px' }} />
                     </div>
-                    <span className="nav-brand-text">22 Ribbits / User Panel</span>
+                    <span className="nav-brand-text">22 Ribbit / User Panel</span>
                 </div>
                 <button onClick={() => signOut()} className="btn-logout">Sign Out</button>
             </header>

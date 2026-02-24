@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: froglabs-whitelist
+    name: ribbitlabs-whitelist
     env: node
     plan: free
     buildCommand: npm install && npm run build

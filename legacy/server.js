@@ -27,10 +27,10 @@ const client = new Client({
 // Role Definitions & Milestones
 const ROLES = {
   TADPOLE: '1135140834581414088',
-  FROG_RUNNER: '1153652478508802068',
+  RIBBIT_RUNNER: '1153652478508802068',
   CROAK_KNIGHT: '1149718327388811314',
   ROYAL_RIBBIT: '1155236969534726269',
-  FROGFATHER: '1135129228183093308'
+  RIBBITFATHER: '1135129228183093308'
 };
 
 const ROLE_ID_TO_NAME = Object.fromEntries(
@@ -38,7 +38,7 @@ const ROLE_ID_TO_NAME = Object.fromEntries(
 );
 
 const XP_THRESHOLDS = {
-  FROG_RUNNER: 1000,
+  RIBBIT_RUNNER: 1000,
   ROYAL_RIBBIT: 3000,
   CROAK_KNIGHT: 3000
 };
@@ -134,15 +134,15 @@ async function checkAndPromoteRole(userId) {
   // --- Discord Chat XP path ---
   // Stage 1: TADPOLE -> FROG RUNNER at 1000 chat XP
   if (chatXP >= 1000 && (!app.chatRoleLevel || app.chatRoleLevel === 'tadpole')) {
-    const success = await assignDiscordRole(userId, ROLES.FROG_RUNNER);
+    const success = await assignDiscordRole(userId, ROLES.RIBBIT_RUNNER);
     if (success) {
-      app.chatRoleLevel = 'frog_runner';
-      console.log(`🚀 [Promotion] ${app.username} -> FROG RUNNER (Discord Grinding 1000 XP)`);
+      app.chatRoleLevel = 'ribbit_runner';
+      console.log(`🚀 [Promotion] ${app.username} -> RIBBIT RUNNER (Discord Grinding 1000 XP)`);
     }
   }
 
-  // Stage 2: FROG RUNNER -> ROYAL RIBBIT at 3000 chat XP
-  if (chatXP >= 3000 && app.chatRoleLevel === 'frog_runner') {
+  // Stage 2: RIBBIT RUNNER -> ROYAL RIBBIT at 3000 chat XP
+  if (chatXP >= 3000 && app.chatRoleLevel === 'ribbit_runner') {
     const success = await assignDiscordRole(userId, ROLES.ROYAL_RIBBIT);
     if (success) {
       app.chatRoleLevel = 'royal_ribbit';
@@ -162,7 +162,7 @@ async function checkAndPromoteRole(userId) {
 
   // Keep legacy currentLevelRole in sync for backwards compat
   app.currentLevelRole = app.chatRoleLevel === 'royal_ribbit' ? ROLES.ROYAL_RIBBIT
-    : app.chatRoleLevel === 'frog_runner' ? ROLES.FROG_RUNNER
+    : app.chatRoleLevel === 'ribbit_runner' ? ROLES.RIBBIT_RUNNER
       : ROLES.TADPOLE;
 
   saveApplications();
@@ -213,7 +213,7 @@ const layout = (title, content, head = '', bodyClass = '', user = null) => `
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title} | 22 FROGS</title>
+    <title>${title} | 22 RIBBITS</title>
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     ${head}
@@ -223,7 +223,7 @@ const layout = (title, content, head = '', bodyClass = '', user = null) => `
       <header>
         <div style="display: flex; align-items: center; gap: 15px;">
           <div class="logo-container">
-            <img src="/img/logo.png" alt="22 FROGS" style="height: 42px; width: 42px; object-fit: cover; border-radius: 50%; border: 2px solid black; background: #eee;">
+            <img src="/img/logo.png" alt="22 RIBBITS" style="height: 42px; width: 42px; object-fit: cover; border-radius: 50%; border: 2px solid black; background: #eee;">
           </div>
           <span style="font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #333;">${title.includes('Admin') ? 'Master Control' : 'User Panel'}</span>
         </div>
@@ -469,8 +469,8 @@ app.get('/admin/approve/:index', isAdmin, async (req, res) => {
     applications[index].status = 'approved';
     const userId = applications[index].id;
 
-    // Assign Frogfather role for manual approval tracking
-    await assignDiscordRole(userId, ROLES.FROGFATHER);
+    // Assign Ribbitfather role for manual approval tracking
+    await assignDiscordRole(userId, ROLES.RIBBITFATHER);
 
     // Also give bonus XP for approval
     applications[index].socialXP = (applications[index].socialXP || 0) + 200;
@@ -519,7 +519,7 @@ app.get('/', async (req, res) => {
   if (!user) {
     return res.send(layout('Home', `
       <div class="hero">
-        <img src="/img/frogs-gray-ensemble.png" alt="22 Frogs" class="frogs-img">
+        <img src="/img/frogs-gray-ensemble.png" alt="22 Ribbits" class="frogs-img">
         <div>
           <a href="/auth/discord" class="btn-discord">LOGIN WITH DISCORD</a>
         </div>
@@ -549,7 +549,7 @@ app.get('/', async (req, res) => {
     const chatXP = userApp.chatXP || 0;
     let discordStageLabel, discordProgress, discordBarColor;
     if (chatXP < 1000) {
-      discordStageLabel = `Stage 1: ${chatXP} / 1000 XP → Frog Runner`;
+      discordStageLabel = `Stage 1: ${chatXP} / 1000 XP → Ribbit Runner`;
       discordProgress = (chatXP / 1000) * 100;
       discordBarColor = '#5865F2';
     } else if (chatXP < 3000) {
@@ -564,7 +564,7 @@ app.get('/', async (req, res) => {
 
     // Role Goal Hint
     let nextRoleHint = '';
-    if (chatXP < 1000) nextRoleHint = 'Rank Up: Reach 1000 Chat XP for Frog Runner';
+    if (chatXP < 1000) nextRoleHint = 'Rank Up: Reach 1000 Chat XP for Ribbit Runner';
     else if (chatXP < 3000) nextRoleHint = 'Rank Up: Reach 3000 Chat XP for Royal Ribbit';
     else if (socialXP < 3000) nextRoleHint = 'Rank Up: Complete X Tasks for Croak Knight';
     else nextRoleHint = 'Rank Up: Ultimate Status Achieved';
@@ -631,7 +631,7 @@ app.get('/', async (req, res) => {
             <div class="xp-bar-bg">
               <div class="xp-bar-fill discord" style="width: ${discordProgress}%; background: ${discordBarColor};"></div>
             </div>
-            <div style="font-size: 0.7rem; color: #888; margin-top: 5px;">Chat in #general: 0→1000 XP = Frog Runner &nbsp;|&nbsp; 1000→3000 XP = Royal Ribbit</div>
+            <div style="font-size: 0.7rem; color: #888; margin-top: 5px;">Chat in #general: 0→1000 XP = Ribbit Runner &nbsp;|&nbsp; 1000→3000 XP = Royal Ribbit</div>
           </div>
         </div>
 
@@ -714,7 +714,7 @@ app.post('/submit', (req, res) => {
         <div class="glass-card" style="text-align: center; border-color: #ff5555; margin-top: 40px;">
           <span class="step-indicator">Security Protocol</span>
           <h1 style="color: #ff5555; margin-bottom: 20px;">Access Forbidden</h1>
-          <p style="margin-bottom: 30px; font-weight: 600; color: #666;">You must be a member of the 22 FROGS Discord server to submit your application.</p>
+          <p style="margin-bottom: 30px; font-weight: 600; color: #666;">You must be a member of the 22 RIBBITS Discord server to submit your application.</p>
           <div style="display: flex; gap: 15px; justify-content: center;">
             <a href="https://discord.gg/5g6M2vT6W7" target="_blank" class="btn-go pulse" style="padding: 12px 25px; font-size: 0.9rem; background: #5865F2;">JOIN SERVER</a>
             <a href="/" class="btn-primary" style="padding: 12px 25px; font-size: 0.9rem; text-decoration: none; display: inline-block; width: auto; background: #f3f4f6; border-color: #ddd; color: #333; box-shadow: none;">RETRY</a>

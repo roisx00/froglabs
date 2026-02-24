@@ -105,7 +105,7 @@ export default function Home() {
             <div className="logo-container">
               <img src="/img/logo.png" alt="22 RIBBITS" style={{ height: '36px', width: '36px' }} />
             </div>
-            <span className="nav-brand-text">22RIBBIT</span>
+            <span className="nav-brand-text">22 RIBBIT</span>
           </div>
         </header>
 
@@ -156,7 +156,7 @@ export default function Home() {
           <div className="logo-container">
             <img src="/img/logo.png" alt="22 RIBBITS" style={{ height: '38px', width: '38px' }} />
           </div>
-          <span className="nav-brand-text">22 Ribbits / WL Registration</span>
+          <span className="nav-brand-text">22 Ribbit / WL Registration</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <span style={{

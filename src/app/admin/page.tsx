@@ -7,7 +7,7 @@ const ROLE_DISPLAY: Record<string, string> = {
     '1153652478508802068': 'RIBBIT RUNNER',
     '1149718327388811314': 'CROAK KNIGHT',
     '1155236969534726269': 'ROYAL RIBBIT',
-    '1135129228183093308': 'FROGFATHER'
+    '1135129228183093308': 'RIBBITFATHER'
 };
 
 const BLANK_TASK = { title: '', link: '', xpReward: '50', type: 'social', actionType: 'quote' };
@@ -83,7 +83,7 @@ export default function AdminPanel() {
 
     const exportCSV = () => {
         const ROLE_ORDER = [
-            { id: '1135129228183093308', name: 'FROGFATHER' },
+            { id: '1135129228183093308', name: 'RIBBITFATHER' },
             { id: '1155236969534726269', name: 'ROYAL RIBBIT' },
             { id: '1149718327388811314', name: 'CROAK KNIGHT' },
             { id: '1153652478508802068', name: 'RIBBIT RUNNER' },
@@ -127,7 +127,7 @@ export default function AdminPanel() {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `froglabs-wallets-${new Date().toISOString().slice(0, 10)}.csv`;
+        link.download = `ribbitlabs-wallets-${new Date().toISOString().slice(0, 10)}.csv`;
         link.click();
         URL.revokeObjectURL(url);
     };
@@ -301,7 +301,7 @@ export default function AdminPanel() {
                     <div className="logo-container">
                         <img src="/img/logo.png" alt="22 RIBBITS" style={{ height: '38px', width: '38px' }} />
                     </div>
-                    <span className="nav-brand-text">22 Ribbits / Admin Control</span>
+                    <span className="nav-brand-text">22 Ribbit / Admin Control</span>
                 </div>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                     <span className="role-tag role-wl">Bot Active</span>

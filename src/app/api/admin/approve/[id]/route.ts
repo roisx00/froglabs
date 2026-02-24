@@ -17,8 +17,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
             socialXP: (doc.data()?.socialXP || 0) + 200
         });
 
-        // Assign Frogfather role for manual approval tracking
-        await assignDiscordRole(id, ROLES.FROGFATHER);
+        // Assign Ribbitfather role for manual approval tracking
+        await assignDiscordRole(id, ROLES.RIBBITFATHER);
 
         // Check for other promotions
         await checkAndPromoteRole(id);
