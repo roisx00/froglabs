@@ -21,40 +21,51 @@
     font-family: 'Inter', sans-serif;
 }
 
-/* Tactical Grid Overlay */
+/* Base Industrial Grid */
 .gridOverlay {
     position: absolute;
     inset: 0;
     background-image:
-        linear-gradient(rgba(10, 1, 1, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(10, 1, 1, 0.05) 1px, transparent 1px);
-    background-size: 30px 30px;
+        linear-gradient(rgba(10, 1, 1, 0.08) 1.5px, transparent 1.5px),
+        linear-gradient(90deg, rgba(10, 1, 1, 0.08) 1.5px, transparent 1.5px);
+    background-size: 50px 50px;
     z-index: 1;
     pointer-events: none;
-    mask-image: radial-gradient(ellipse at center, black, transparent 90%);
+    mask-image: radial-gradient(circle at center, black, transparent 100%);
 }
 
-/* Scanning Line Animation */
+/* Secondary Tech Grid */
+.gridOverlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(10, 1, 1, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(10, 1, 1, 0.03) 1px, transparent 1px);
+    background-size: 10px 10px;
+}
+
+/* Pulsing Scanner Effect */
 .scanLine {
     position: absolute;
     width: 100%;
-    height: 2px;
-    background: rgba(10, 1, 1, 0.1);
-    box-shadow: 0 0 10px rgba(10, 1, 1, 0.05);
-    top: 0;
+    height: 15vh;
+    background: linear-gradient(to bottom, transparent, rgba(10, 1, 1, 0.05), transparent);
+    top: -20vh;
     left: 0;
     z-index: 2;
-    animation: scan 8s linear infinite;
+    animation: scanLoop 6s linear infinite;
     pointer-events: none;
+    border-bottom: 1px solid rgba(10, 1, 1, 0.1);
 }
 
-@keyframes scan {
-    from {
-        top: 0%;
+@keyframes scanLoop {
+    0% {
+        transform: translateY(0vh);
     }
 
-    to {
-        top: 100%;
+    100% {
+        transform: translateY(120vh);
     }
 }
 
@@ -64,45 +75,46 @@
     text-align: center;
     max-width: 900px;
     width: 100%;
-    padding: 4rem 2rem;
-    border-left: var(--border-thick);
-    border-right: var(--border-thick);
-    background: rgba(204, 204, 202, 0.4);
-    backdrop-filter: blur(5px);
+    padding: 5rem 3rem;
+    background: rgba(204, 204, 202, 0.6);
+    backdrop-filter: blur(12px);
+    border: var(--border-thick);
+    box-shadow: 20px 20px 0px rgba(10, 1, 1, 0.1);
 }
 
+/* Tactical Corner Brackets */
 .tacticalCorner {
     position: absolute;
-    width: 20px;
-    height: 20px;
-    border: var(--border-thick);
+    width: 40px;
+    height: 40px;
+    border: 4px solid #0A0101;
     z-index: 11;
 }
 
 .corner-tl {
-    top: -2px;
-    left: -2px;
+    top: -10px;
+    left: -10px;
     border-right: none;
     border-bottom: none;
 }
 
 .corner-tr {
-    top: -2px;
-    right: -2px;
+    top: -10px;
+    right: -10px;
     border-left: none;
     border-bottom: none;
 }
 
 .corner-bl {
-    bottom: -2px;
-    left: -2px;
+    bottom: -10px;
+    left: -10px;
     border-right: none;
     border-top: none;
 }
 
 .corner-br {
-    bottom: -2px;
-    right: -2px;
+    bottom: -10px;
+    right: -10px;
     border-left: none;
     border-top: none;
 }
@@ -110,225 +122,269 @@
 .preTitle {
     font-family: var(--font-mono);
     color: var(--text-main);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 700;
-    letter-spacing: 0.5rem;
+    letter-spacing: 0.8rem;
     text-transform: uppercase;
-    margin-bottom: 2rem;
-    opacity: 0.6;
+    margin-bottom: 2.5rem;
+    opacity: 0.8;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .preTitle::before,
 .preTitle::after {
     content: '';
-    height: 1px;
-    width: 40px;
+    height: 2px;
+    width: 60px;
     background: var(--text-main);
-    opacity: 0.2;
 }
 
 .heroTitle {
     font-family: 'Inter', sans-serif;
-    font-size: clamp(3.5rem, 12vw, 8rem);
+    font-size: clamp(4rem, 15vw, 10rem);
     font-weight: 900;
-    line-height: 0.85;
-    margin-bottom: 2rem;
+    line-height: 0.8;
+    margin-bottom: 3rem;
     color: var(--text-main);
-    letter-spacing: -4px;
+    letter-spacing: -6px;
     text-transform: uppercase;
+}
+
+.heroTitle span {
+    display: block;
+    position: relative;
+}
+
+/* Glitch Typography */
+.heroTitle span:hover {
+    animation: glitch-text 0.3s infinite;
+}
+
+@keyframes glitch-text {
+    0% {
+        transform: translate(0);
+    }
+
+    20% {
+        transform: translate(-2px, 2px);
+    }
+
+    40% {
+        transform: translate(-2px, -2px);
+    }
+
+    60% {
+        transform: translate(2px, 2px);
+    }
+
+    80% {
+        transform: translate(2px, -2px);
+    }
+
+    100% {
+        transform: translate(0);
+    }
 }
 
 .statusBadge {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    border: var(--border-thick);
-    padding: 10px 24px;
-    border-radius: 0;
+    gap: 15px;
+    background: var(--text-main);
+    color: var(--bg-tech);
+    padding: 12px 30px;
     margin-bottom: 4rem;
-    background: transparent;
+    border-radius: 0;
 }
 
 .statusIndicator {
-    width: 10px;
-    height: 10px;
-    background: var(--text-main);
-    animation: blink 1s step-end infinite;
+    width: 12px;
+    height: 12px;
+    background: #ffdd00;
+    border-radius: 50%;
+    animation: pulse-glow 1.5s infinite;
 }
 
-@keyframes blink {
+@keyframes pulse-glow {
     0% {
+        transform: scale(1);
         opacity: 1;
+        box-shadow: 0 0 0px #ffdd00;
     }
 
     50% {
-        opacity: 0;
+        transform: scale(1.2);
+        opacity: 0.8;
+        box-shadow: 0 0 10px #ffdd00;
     }
 
     100% {
+        transform: scale(1);
         opacity: 1;
+        box-shadow: 0 0 0px #ffdd00;
     }
 }
 
 .statusBadge span {
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     font-weight: 700;
-    color: var(--text-main);
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
 }
 
 .description {
     font-family: var(--font-mono);
     color: var(--text-main);
-    margin-bottom: 4rem;
-    line-height: 1.8;
-    font-size: 0.9rem;
-    max-width: 600px;
+    margin-bottom: 5rem;
+    line-height: 1.6;
+    font-size: 1rem;
+    max-width: 650px;
     margin-left: auto;
     margin-right: auto;
-    opacity: 0.8;
+    font-weight: 500;
 }
 
 .signupGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-width: 500px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0;
+    max-width: 600px;
     margin: 0 auto 5rem;
-}
-
-.inputWrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
+    border: var(--border-thick);
 }
 
 .emailInput {
-    width: 100%;
     background: transparent !important;
-    border: var(--border-thick) !important;
-    padding: 18px 24px;
+    border: none !important;
+    padding: 24px;
     color: var(--text-main);
     font-family: var(--font-mono);
-    font-size: 1rem;
+    font-size: 1.1rem;
     outline: none;
-    border-radius: 0;
-}
-
-.emailInput::placeholder {
-    color: rgba(10, 1, 1, 0.3);
 }
 
 .btnNotify {
     background: var(--btn-main);
     color: #fff;
-    border: var(--border-thick);
-    padding: 18px 40px;
+    border-left: var(--border-thick);
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+    padding: 0 40px;
     font-weight: 900;
     font-family: var(--font-mono);
     text-transform: uppercase;
     letter-spacing: 2px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    border-radius: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btnNotify:hover {
-    background: var(--text-main);
-    color: var(--bg-tech);
-    transform: translateY(-2px);
-    box-shadow: 4px 4px 0px rgba(10, 1, 1, 0.2);
+    background: #000;
+    letter-spacing: 4px;
 }
 
 .socials {
     display: flex;
-    gap: 40px;
+    gap: 60px;
     justify-content: center;
-    flex-wrap: wrap;
 }
 
 .socialLink {
     color: var(--text-main);
     text-decoration: none;
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    transition: opacity 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-bottom: 2px solid transparent;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    padding-bottom: 5px;
 }
 
-.socialLink:hover {
-    border-bottom: 2px solid var(--text-main);
+.socialLink::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--text-main);
+    transition: width 0.3s ease;
 }
 
-.dataStats {
+.socialLink:hover::after {
+    width: 100%;
+}
+
+/* Floating HUD Data Elements */
+.hudData {
     position: absolute;
     font-family: var(--font-mono);
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     color: var(--text-main);
-    opacity: 0.3;
+    opacity: 0.4;
+    line-height: 1.5;
     pointer-events: none;
+    text-transform: uppercase;
 }
 
-.stats-tl {
-    top: 2rem;
-    left: 2rem;
-    text-align: left;
+.hud-tl {
+    top: 3rem;
+    left: 3rem;
+    border-left: 2px solid var(--text-main);
+    padding-left: 1rem;
 }
 
-.stats-tr {
-    top: 2rem;
-    right: 2rem;
+.hud-tr {
+    top: 3rem;
+    right: 3rem;
+    border-right: 2px solid var(--text-main);
+    padding-right: 1rem;
     text-align: right;
 }
 
-.stats-bl {
-    bottom: 2rem;
-    left: 2rem;
-    text-align: left;
+.hud-bl {
+    bottom: 3rem;
+    left: 3rem;
+    border-left: 2px solid var(--text-main);
+    padding-left: 1rem;
+}
+
+.hud-br {
+    bottom: 3rem;
+    right: 3rem;
+    border-right: 2px solid var(--text-main);
+    padding-right: 1rem;
+    text-align: right;
 }
 
 .comingSoonFooter {
     position: absolute;
-    bottom: 2rem;
-    right: 2rem;
+    bottom: 1.5rem;
+    width: 100%;
+    text-align: center;
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     color: var(--text-main);
-    letter-spacing: 3px;
+    letter-spacing: 5px;
     font-weight: 700;
-    text-transform: uppercase;
+    opacity: 0.5;
 }
 
-/* Animations */
-.heroTitle span {
-    display: inline-block;
-    animation: jitter 5s infinite alternate;
-}
-
-@keyframes jitter {
-    0% {
-        transform: translate(0);
+/* Responsive Fixes */
+@media (max-width: 768px) {
+    .signupGroup {
+        grid-template-columns: 1fr;
     }
 
-    2% {
-        transform: translate(-2px, 1px);
-    }
-
-    4% {
-        transform: translate(2px, -1px);
-    }
-
-    6% {
-        transform: translate(0);
+    .btnNotify {
+        border-left: none;
+        border-top: var(--border-thick);
+        padding: 20px;
     }
 }
