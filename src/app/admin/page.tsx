@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 const ROLE_DISPLAY: Record<string, string> = {
     '1135140834581414088': 'TADPOLE',
-    '1153652478508802068': 'FROG RUNNER',
+    '1153652478508802068': 'RIBBIT RUNNER',
     '1149718327388811314': 'CROAK KNIGHT',
     '1155236969534726269': 'ROYAL RIBBIT',
     '1135129228183093308': 'FROGFATHER'
@@ -86,7 +86,7 @@ export default function AdminPanel() {
             { id: '1135129228183093308', name: 'FROGFATHER' },
             { id: '1155236969534726269', name: 'ROYAL RIBBIT' },
             { id: '1149718327388811314', name: 'CROAK KNIGHT' },
-            { id: '1153652478508802068', name: 'FROG RUNNER' },
+            { id: '1153652478508802068', name: 'RIBBIT RUNNER' },
             { id: '1135140834581414088', name: 'TADPOLE' },
         ];
 
@@ -299,9 +299,9 @@ export default function AdminPanel() {
             <header>
                 <div className="nav-brand">
                     <div className="logo-container">
-                        <img src="/img/logo.png" alt="22 FROGS" style={{ height: '38px', width: '38px' }} />
+                        <img src="/img/logo.png" alt="22 RIBBITS" style={{ height: '38px', width: '38px' }} />
                     </div>
-                    <span className="nav-brand-text">22 Frogs / Admin Control</span>
+                    <span className="nav-brand-text">22 Ribbits / Admin Control</span>
                 </div>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                     <span className="role-tag role-wl">Bot Active</span>
@@ -332,7 +332,7 @@ export default function AdminPanel() {
                         Master Control Panel
                     </h1>
                     <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-muted)', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
-                        Application Management — FrogLabs WL Program
+                        Application Management — RibbitLabs WL Program
                     </p>
                 </div>
 
@@ -511,7 +511,7 @@ export default function AdminPanel() {
             </div>
 
             <footer>
-                <span className="footer-text">powered by 22frogs</span>
+                <span className="footer-text">powered by 22ribbits</span>
             </footer>
         </div>
     );
