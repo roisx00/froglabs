@@ -20,7 +20,7 @@ export default function ComingSoon() {
 
             {/* Industrial HUD Data Overlays */}
             <div className="hudData hud-tl">
-                FROG_SYS_LOAD: 1.0.4 - [STABLE]<br />
+                RIBBIT_SYS_LOAD: 1.0.4 - [STABLE]<br />
                 SECTOR: 0xFF.01 // REBOOT_REQUIRED<br />
                 CORE_VOLTAGE: 1.25V // TEMP: 28°C
             </div>
@@ -37,7 +37,7 @@ export default function ComingSoon() {
             <div className="hudData hud-br">
                 MEMORY_USAGE: 256MB/8GB<br />
                 DISK_AVAIL: 1.2TB<br />
-                KERNEL: LNX_v6.1.0-FROG
+                KERNEL: LNX_v6.1.0-RIBBIT
             </div>
 
             <div className="content">
@@ -50,7 +50,7 @@ export default function ComingSoon() {
                 <div className="logoBox">
                     <div className="preTitle">Tactical Infiltration Phase</div>
                     <h1 className="heroTitle">
-                        <span>FROG</span>
+                        <span>RIBBIT</span>
                         <span>ROYALE</span>
                     </h1>
                 </div>
@@ -79,14 +79,14 @@ export default function ComingSoon() {
                     <a href="https://discord.gg/5g6M2vT6W7" target="_blank" rel="noopener noreferrer" className="socialLink">
                         [ Discord_Intel ]
                     </a>
-                    <a href="https://x.com/22Frogs" target="_blank" rel="noopener noreferrer" className="socialLink">
+                    <a href="https://x.com/22Ribbits" target="_blank" rel="noopener noreferrer" className="socialLink">
                         [ X_Communications ]
                     </a>
                 </div>
             </div>
 
             <footer className="comingSoonFooter">
-                &gt;&gt; ESTABLISHING_SECURE_LINK // TARGET_LOCKED_001 // BY_FROGLABS_TECH
+                &gt;&gt; ESTABLISHING_SECURE_LINK // TARGET_LOCKED_001 // BY_RIBBITLABS_TECH
             </footer>
         </main>
     );

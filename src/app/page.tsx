@@ -103,9 +103,9 @@ export default function Home() {
         <header>
           <div className="nav-brand">
             <div className="logo-container">
-              <img src="/img/logo.png" alt="22 FROGS" style={{ height: '36px', width: '36px' }} />
+              <img src="/img/logo.png" alt="22 RIBBITS" style={{ height: '36px', width: '36px' }} />
             </div>
-            <span className="nav-brand-text">22FROG</span>
+            <span className="nav-brand-text">22RIBBIT</span>
           </div>
         </header>
 
@@ -113,7 +113,7 @@ export default function Home() {
           <div className="hero">
             {/* title — always order:1 on mobile */}
             <div className="hero-content">
-              <h1 className="hero-title">FROG<br />ROYALE</h1>
+              <h1 className="hero-title">RIBBIT<br />ROYALE</h1>
               {/* Desktop only button (inside content column) */}
               <button onClick={() => signIn('discord')} className="btn-discord hero-btn-desktop">
                 Connect Discord
@@ -121,7 +121,7 @@ export default function Home() {
             </div>
             {/* image — order:2 on mobile */}
             <div className="frogs-img-container">
-              <img src="/img/frogs-gray-ensemble.png" alt="22 Frogs" className="frogs-img" />
+              <img src="/img/frogs-gray-ensemble.png" alt="22 Ribbits" className="frogs-img" />
             </div>
             {/* Mobile-only button — order:3, hidden on desktop */}
             <div className="hero-btn-mobile">
@@ -134,7 +134,7 @@ export default function Home() {
 
         {/* Footer */}
         <footer>
-          <span className="footer-text">powered by 22frogs</span>
+          <span className="footer-text">powered by 22ribbits</span>
         </footer>
       </main>
     );
@@ -154,9 +154,9 @@ export default function Home() {
       <header>
         <div className="nav-brand">
           <div className="logo-container">
-            <img src="/img/logo.png" alt="22 FROGS" style={{ height: '38px', width: '38px' }} />
+            <img src="/img/logo.png" alt="22 RIBBITS" style={{ height: '38px', width: '38px' }} />
           </div>
-          <span className="nav-brand-text">22 Frogs / WL Registration</span>
+          <span className="nav-brand-text">22 Ribbits / WL Registration</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <span style={{
@@ -331,7 +331,7 @@ export default function Home() {
       </div>
       {/* Footer */}
       <footer>
-        <span className="footer-text">powered by 22frogs</span>
+        <span className="footer-text">powered by 22ribbits</span>
       </footer>
     </div>
   );

@@ -8,13 +8,13 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const ROLE_DISPLAY: Record<string, string> = {
     '1135140834581414088': 'TADPOLE',
-    '1153652478508802068': 'FROG RUNNER',
+    '1153652478508802068': 'RIBBIT RUNNER',
     '1149718327388811314': 'CROAK KNIGHT',
     '1155236969534726269': 'ROYAL RIBBIT',
     '1135129228183093308': 'FROGFATHER'
 };
 
-const DISCORD_THRESHOLDS = { FROG_RUNNER: 1000, ROYAL_RIBBIT: 3000 };
+const DISCORD_THRESHOLDS = { RIBBIT_RUNNER: 1000, ROYAL_RIBBIT: 3000 };
 const X_TASKS_THRESHOLD = 3000;
 const TEN_MINUTES = 10 * 60 * 1000;
 
@@ -127,13 +127,13 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
     const xTasksLabel = xTasksComplete ? 'CROAK KNIGHT UNLOCKED' : `${formatXP(socialXP)} / ${formatXP(X_TASKS_THRESHOLD)} XP`;
 
     let discordLabel: string, discordProgress: number, discordBarClass: string;
-    if (chatXP < DISCORD_THRESHOLDS.FROG_RUNNER) {
-        discordLabel = `${formatXP(chatXP)} / ${formatXP(DISCORD_THRESHOLDS.FROG_RUNNER)} XP - Stage 1`;
-        discordProgress = (chatXP / DISCORD_THRESHOLDS.FROG_RUNNER) * 100;
+    if (chatXP < DISCORD_THRESHOLDS.RIBBIT_RUNNER) {
+        discordLabel = `${formatXP(chatXP)} / ${formatXP(DISCORD_THRESHOLDS.RIBBIT_RUNNER)} XP - Stage 1`;
+        discordProgress = (chatXP / DISCORD_THRESHOLDS.RIBBIT_RUNNER) * 100;
         discordBarClass = 'discord';
     } else if (chatXP < DISCORD_THRESHOLDS.ROYAL_RIBBIT) {
         discordLabel = `${formatXP(chatXP)} / ${formatXP(DISCORD_THRESHOLDS.ROYAL_RIBBIT)} XP - Stage 2`;
-        discordProgress = ((chatXP - DISCORD_THRESHOLDS.FROG_RUNNER) / (DISCORD_THRESHOLDS.ROYAL_RIBBIT - DISCORD_THRESHOLDS.FROG_RUNNER)) * 100;
+        discordProgress = ((chatXP - DISCORD_THRESHOLDS.RIBBIT_RUNNER) / (DISCORD_THRESHOLDS.ROYAL_RIBBIT - DISCORD_THRESHOLDS.RIBBIT_RUNNER)) * 100;
         discordBarClass = 'discord';
     } else {
         discordLabel = 'ROYAL RIBBIT UNLOCKED';
@@ -158,9 +158,9 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
             <header>
                 <div className="nav-brand">
                     <div className="logo-container">
-                        <img src="/img/logo.png" alt="22 FROGS" style={{ height: '38px', width: '38px' }} />
+                        <img src="/img/logo.png" alt="22 RIBBITS" style={{ height: '38px', width: '38px' }} />
                     </div>
-                    <span className="nav-brand-text">22 Frogs / User Panel</span>
+                    <span className="nav-brand-text">22 Ribbits / User Panel</span>
                 </div>
                 <button onClick={() => signOut()} className="btn-logout">Sign Out</button>
             </header>
@@ -171,7 +171,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                         {user.username}
                     </h1>
                     <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--text-muted)', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
-                        Discord Member — FrogLabs Whitelist Program
+                        Discord Member — RibbitLabs Whitelist Program
                     </p>
                 </div>
 
@@ -224,7 +224,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                             <div className={`xp-bar-fill ${discordBarClass}`} style={{ width: `${discordProgress}%` }}></div>
                         </div>
                         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'var(--text-muted)', marginTop: '6px' }}>
-                            10 messages = 5 XP &mdash; Stage 1: 1,000 XP (Frog Runner) &mdash; Stage 2: 3,000 XP (Royal Ribbit)
+                            10 messages = 5 XP &mdash; Stage 1: 1,000 XP (Ribbit Runner) &mdash; Stage 2: 3,000 XP (Royal Ribbit)
                         </div>
                     </div>
                 </div>
@@ -290,7 +290,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                         </div>
                         <div className="wl-path-card">
                             <h4>Path B — Discord Activity</h4>
-                            <p>Chat in Discord. Every <strong style={{ color: 'var(--text-primary)' }}>10 messages earns 5 XP</strong>. Reach 1,000 XP for Frog Runner and 3,000 XP for Royal Ribbit.</p>
+                            <p>Chat in Discord. Every <strong style={{ color: 'var(--text-primary)' }}>10 messages earns 5 XP</strong>. Reach 1,000 XP for Ribbit Runner and 3,000 XP for Royal Ribbit.</p>
                         </div>
                         <div className="wl-path-card">
                             <h4>Path C — Submit Application</h4>
@@ -307,7 +307,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                 </div>
 
                 <footer>
-                    <span className="footer-text">powered by 22frogs</span>
+                    <span className="footer-text">powered by 22ribbits</span>
                 </footer>
             </div>
         </div>

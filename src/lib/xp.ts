@@ -3,14 +3,14 @@ import { db } from './firebase';
 // Role IDs - kept here for reference by API routes
 export const ROLES = {
     TADPOLE: '1135140834581414088',
-    FROG_RUNNER: '1153652478508802068',
+    RIBBIT_RUNNER: '1153652478508802068',
     CROAK_KNIGHT: '1149718327388811314',
     ROYAL_RIBBIT: '1155236969534726269',
     FROGFATHER: '1135129228183093308'
 };
 
 export const XP_THRESHOLDS = {
-    FROG_RUNNER: 1000,
+    RIBBIT_RUNNER: 1000,
     ROYAL_RIBBIT: 3000,
     CROAK_KNIGHT: 3000
 };
@@ -50,10 +50,10 @@ export async function checkAndPromoteRole(userId: string) {
         updates.chatRoleLevel = 'royal_ribbit';
         updates.currentLevelRole = ROLES.ROYAL_RIBBIT;
         updates.pendingRoleId = ROLES.ROYAL_RIBBIT; // bot picks this up
-    } else if (chatXP >= XP_THRESHOLDS.FROG_RUNNER && !app.chatRoleLevel && app.chatRoleLevel !== 'royal_ribbit') {
-        updates.chatRoleLevel = 'frog_runner';
-        updates.currentLevelRole = ROLES.FROG_RUNNER;
-        updates.pendingRoleId = ROLES.FROG_RUNNER;
+    } else if (chatXP >= XP_THRESHOLDS.RIBBIT_RUNNER && !app.chatRoleLevel && app.chatRoleLevel !== 'royal_ribbit') {
+        updates.chatRoleLevel = 'ribbit_runner';
+        updates.currentLevelRole = ROLES.RIBBIT_RUNNER;
+        updates.pendingRoleId = ROLES.RIBBIT_RUNNER;
     }
 
     // --- X Tasks (socialXP) path ---

@@ -31,7 +31,7 @@ const ANNOUNCE_CHANNEL_ID = process.env.ANNOUNCE_CHANNEL_ID || '';
 
 const ROLES = {
     TADPOLE: '1135140834581414088',
-    FROG_RUNNER: '1153652478508802068',
+    RIBBIT_RUNNER: '1153652478508802068',
     CROAK_KNIGHT: '1149718327388811314',
     ROYAL_RIBBIT: '1155236969534726269',
     FROGFATHER: '1135129228183093308'
@@ -78,9 +78,9 @@ async function checkPromotion(guild: any, userId: string, chatXP: number, social
         updates.chatRoleLevel = 'royal_ribbit';
         updates.currentLevelRole = ROLES.ROYAL_RIBBIT;
     } else if (chatXP >= 1000 && !app.chatRoleLevel && app.chatRoleLevel !== 'royal_ribbit') {
-        await tryAssignRole(guild, userId, ROLES.FROG_RUNNER, 'FROG RUNNER');
-        updates.chatRoleLevel = 'frog_runner';
-        updates.currentLevelRole = ROLES.FROG_RUNNER;
+        await tryAssignRole(guild, userId, ROLES.RIBBIT_RUNNER, 'RIBBIT RUNNER');
+        updates.chatRoleLevel = 'ribbit_runner';
+        updates.currentLevelRole = ROLES.RIBBIT_RUNNER;
     }
 
     // Social XP path (web sets socialXP, bot promotes)

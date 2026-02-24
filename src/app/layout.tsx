@@ -3,8 +3,8 @@ import "./globals.css";
 import NextAuthProvider from "@/components/NextAuthProvider";
 
 export const metadata: Metadata = {
-  title: "22 FROGS",
-  description: "Join the whitelist for 22 FROGS",
+  title: "22 RIBBITS",
+  description: "Join the whitelist for 22 RIBBITS",
 };
 
 export default function RootLayout({

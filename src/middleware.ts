@@ -6,8 +6,8 @@ export function middleware(request: NextRequest) {
     const hostname = request.headers.get('host') || ''
 
     // Define domains
-    const mainDomain = 'frogroyale.fun'
-    const whitelistDomain = 'whitelist.frogroyale.fun'
+    const mainDomain = 'ribbitroyale.fun'
+    const whitelistDomain = 'whitelist.ribbitroyale.fun'
 
     // Local development support (optional)
     const isLocal = hostname.includes('localhost')
