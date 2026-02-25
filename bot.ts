@@ -28,6 +28,9 @@ const client = new Client({
 // ─── Config ───────────────────────────────────────────────────────────────────
 const GUILD_ID = process.env.DISCORD_GUILD_ID!;
 const ANNOUNCE_CHANNEL_ID = process.env.ANNOUNCE_CHANNEL_ID || '';
+const GIF_CHANNEL_ID = '1474437615229997218';
+const GIF_LINK = 'https://tenor.com/d4DvEl0hB4.gif';
+const GIF_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 
 const ROLES = {
     TADPOLE: '1135140834581414088',
@@ -61,6 +64,20 @@ async function tryAssignRole(guild: any, userId: string, roleId: string, label: 
         }
     } catch (err) {
         console.error(`[Bot] ❌ Failed to assign ${label} to ${userId}:`, err);
+    }
+}
+
+async function autoPostGif() {
+    try {
+        const guild = await client.guilds.fetch(GUILD_ID).catch(() => null);
+        if (!guild) return;
+        const channel = guild.channels.cache.get(GIF_CHANNEL_ID) as TextChannel | undefined;
+        if (channel) {
+            await channel.send(GIF_LINK);
+            console.log(`[Bot] 📺 Auto-posted GIF to ${channel.name}`);
+        }
+    } catch (err) {
+        console.error('[Bot] Auto-post GIF error:', err);
     }
 }
 
@@ -168,6 +185,8 @@ client.once('clientReady', () => {
     console.log(`💬 XP rate: +${XP_PER_AWARD} XP per ${MSGS_PER_XP_AWARD} messages (${SPAM_GUARD_MS / 1000}s spam guard)`);
     // Poll for pending roles from web server every 30 seconds
     setInterval(pollPendingRoles, 30_000);
+    // Auto-post GIF every 5 minutes
+    setInterval(autoPostGif, GIF_INTERVAL_MS);
 });
 
 client.login(process.env.TOKEN);
