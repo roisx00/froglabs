@@ -66,7 +66,7 @@ export default function ComingSoon() {
                 </p>
 
                 <div style={{ marginBottom: '3rem' }}>
-                    <a href="https://whitelist.ribbitroyale.fun/" className="btnPortal">
+                    <a href="https://www.whitelist.ribbitroyale.fun/" className="btnPortal">
                         [ ACCESS_WHITELIST_PORTAL ]
                     </a>
                 </div>
