@@ -7,12 +7,43 @@ export async function POST(req: NextRequest) {
     try {
         const data = await req.json();
         const { title, link, xpReward, type, location, actionType } = data;
+
+        // Get current max order for this location
+        const snapshot = await db.collection('tasks').where('location', '==', location).orderBy('order', 'desc').limit(1).get();
+        let maxOrder = 0;
+        if (!snapshot.empty) {
+            maxOrder = snapshot.docs[0].data().order || 0;
+        }
+
         const id = 't' + Date.now();
         await db.collection('tasks').doc(id).set({
-            id, title, link, xpReward: parseInt(xpReward), type, location, actionType
+            id, title, link, xpReward: parseInt(xpReward), type, location, actionType,
+            order: maxOrder + 1
         });
         return NextResponse.json({ success: true });
     } catch (error) {
+        console.error('POST task error:', error);
+        return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+    }
+}
+
+export async function PUT(req: NextRequest) {
+    try {
+        const { updates } = await req.json(); // Array of { id, order }
+        if (!updates || !Array.isArray(updates)) {
+            return NextResponse.json({ error: 'Invalid updates' }, { status: 400 });
+        }
+
+        const batch = db.batch();
+        updates.forEach((u: any) => {
+            const ref = db.collection('tasks').doc(u.id);
+            batch.update(ref, { order: u.order });
+        });
+        await batch.commit();
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error('PUT task error:', error);
         return NextResponse.json({ error: 'Internal error' }, { status: 500 });
     }
 }

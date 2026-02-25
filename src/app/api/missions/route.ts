@@ -3,7 +3,7 @@ import { db } from "../../../lib/firebase";
 
 export async function GET() {
     try {
-        const snapshot = await db.collection('tasks').get();
+        const snapshot = await db.collection('tasks').orderBy('order', 'asc').get();
         const missions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         return NextResponse.json(missions);
     } catch (err) {

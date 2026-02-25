@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 
 const ROLE_DISPLAY: Record<string, string> = {
     '1135140834581414088': 'TADPOLE',
@@ -79,6 +80,36 @@ export default function AdminPanel() {
         if (!confirm('Delete this task?')) return;
         await fetch(`/api/admin/missions?id=${id}`, { method: 'DELETE' });
         await fetchAll();
+    };
+
+    const handleDragEnd = async (result: DropResult, location: 'registration' | 'dashboard') => {
+        if (!result.destination) return;
+
+        const items = Array.from(location === 'registration' ? regTasks : dashTasks);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+
+        // Update local state immediately
+        const otherLocationTasks = missions.filter(m => m.location !== location);
+        const updatedMissions = [...otherLocationTasks, ...items].sort((a, b) => (a.order || 0) - (b.order || 0));
+        setMissions(updatedMissions);
+
+        // Sync to backend
+        const updates = items.map((task, index) => ({
+            id: task.id,
+            order: index + 1
+        }));
+
+        try {
+            await fetch('/api/admin/missions', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ updates })
+            });
+        } catch (err) {
+            console.error('Failed to sync task order:', err);
+            fetchAll(); // Revert on error
+        }
     };
 
     const exportCSV = () => {
@@ -237,33 +268,65 @@ export default function AdminPanel() {
             {(location === 'registration' ? regTasks : dashTasks).length > 0 && (
                 <div style={{ borderTop: '1px solid var(--border-subtle)' }}>
                     <div style={{ padding: '14px 24px 6px', fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1.5px' }}>
-                        Active Tasks ({(location === 'registration' ? regTasks : dashTasks).length})
+                        Active Tasks ({(location === 'registration' ? regTasks : dashTasks).length}) — Drag to reorder
                     </div>
-                    {(location === 'registration' ? regTasks : dashTasks).map((task: any) => (
-                        <div key={task.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 24px', borderBottom: '1px solid var(--border-subtle)', gap: '12px' }}>
-                            <div style={{ flex: 1 }}>
-                                <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.88rem' }}>{task.title}</div>
-                                <div style={{ display: 'flex', gap: '12px', marginTop: '4px', flexWrap: 'wrap' }}>
-                                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--accent-cyan)' }}>{task.actionType?.toUpperCase()}</span>
-                                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--accent-green)' }}>+{task.xpReward} XP</span>
-                                    <a href={task.link} target="_blank" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--text-muted)' }}>
-                                        {task.link.length > 40 ? task.link.slice(0, 40) + '...' : task.link} ↗
-                                    </a>
+                    <DragDropContext onDragEnd={(result) => handleDragEnd(result, location)}>
+                        <Droppable droppableId={`tasks-${location}`}>
+                            {(provided) => (
+                                <div {...provided.droppableProps} ref={provided.innerRef}>
+                                    {(location === 'registration' ? regTasks : dashTasks).map((task: any, index: number) => (
+                                        <Draggable key={task.id} draggableId={task.id} index={index}>
+                                            {(provided) => (
+                                                <div
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    {...provided.dragHandleProps}
+                                                    style={{
+                                                        ...provided.draggableProps.style,
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between',
+                                                        padding: '12px 24px',
+                                                        borderBottom: '1px solid var(--border-subtle)',
+                                                        gap: '12px',
+                                                        background: 'var(--bg-card)'
+                                                    }}
+                                                >
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+                                                        <div style={{ cursor: 'grab', color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }}>
+                                                            ⋮⋮
+                                                        </div>
+                                                        <div style={{ flex: 1 }}>
+                                                            <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.88rem' }}>{task.title}</div>
+                                                            <div style={{ display: 'flex', gap: '12px', marginTop: '4px', flexWrap: 'wrap' }}>
+                                                                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--accent-cyan)' }}>{task.actionType?.toUpperCase()}</span>
+                                                                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--accent-green)' }}>+{task.xpReward} XP</span>
+                                                                <a href={task.link} target="_blank" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--text-muted)' }}>
+                                                                    {task.link.length > 40 ? task.link.slice(0, 40) + '...' : task.link} ↗
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => handleDeleteTask(task.id)}
+                                                        style={{
+                                                            fontFamily: 'var(--font-mono)', fontSize: '0.62rem', fontWeight: 700,
+                                                            padding: '4px 12px', borderRadius: '4px', cursor: 'pointer',
+                                                            background: 'rgba(164,22,26,0.1)', border: '1.5px solid var(--accent-red)',
+                                                            color: 'var(--accent-red)', textTransform: 'uppercase', flexShrink: 0
+                                                        }}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                    {provided.placeholder}
                                 </div>
-                            </div>
-                            <button
-                                onClick={() => handleDeleteTask(task.id)}
-                                style={{
-                                    fontFamily: 'var(--font-mono)', fontSize: '0.62rem', fontWeight: 700,
-                                    padding: '4px 12px', borderRadius: '4px', cursor: 'pointer',
-                                    background: 'rgba(164,22,26,0.1)', border: '1.5px solid var(--accent-red)',
-                                    color: 'var(--accent-red)', textTransform: 'uppercase', flexShrink: 0
-                                }}
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    ))}
+                            )}
+                        </Droppable>
+                    </DragDropContext>
                 </div>
             )}
 

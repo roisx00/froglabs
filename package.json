@@ -11,6 +11,7 @@
     "bot": "tsx bot.ts"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
     "body-parser": "^1.20.3",
     "discord.js": "^14.18.0",
     "dotenv": "^16.4.7",
