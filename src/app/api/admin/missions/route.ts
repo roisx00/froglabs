@@ -8,12 +8,15 @@ export async function POST(req: NextRequest) {
         const data = await req.json();
         const { title, link, xpReward, type, location, actionType } = data;
 
-        // Get current max order for this location
-        const snapshot = await db.collection('tasks').where('location', '==', location).orderBy('order', 'desc').limit(1).get();
+        // Get current max order for this location without requiring an index
+        const snapshot = await db.collection('tasks').where('location', '==', location).get();
         let maxOrder = 0;
-        if (!snapshot.empty) {
-            maxOrder = snapshot.docs[0].data().order || 0;
-        }
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.order && data.order > maxOrder) {
+                maxOrder = data.order;
+            }
+        });
 
         const id = 't' + Date.now();
         await db.collection('tasks').doc(id).set({
