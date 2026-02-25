@@ -37,6 +37,32 @@ const GIF_LINKS = [
     'https://tenor.com/s9zVyLdrOB0.gif'
 ];
 const GIF_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+const RULES_CHANNEL_ID = '1135228182065328148';
+const RULES_HEADER_IMG = ''; // Placeholder for generated image
+
+const SERVER_RULES = [
+    '# 🐸 RIBBIT ROYALE: COMMAND PROTOCOLS',
+    'Welcome to the amphibious front. To maintain operational integrity, all units must adhere to the following protocols:',
+    '',
+    '### 01 | INTERNAL COMMUNICATIONS',
+    'Maintain a baseline of mutual respect. Hostility, harassment, or corrosive behavior will result in immediate decommissioning.',
+    '',
+    '### 02 | CHANNEL INTEGRITY',
+    'Execute operations in their designated sectors. Keep general intel in #general, and mission-specific data in appropriate tactical channels.',
+    '',
+    '### 03 | SECURITY CLEARANCE',
+    'Self-promotion, unauthorized links, and phishing attempts are high-level security breaches. Perpetrators will be purged.',
+    '',
+    '### 04 | THE AMPHIBIOUS PARADIGM',
+    'No hate speech, toxicity, or NSFW content. This is a high-performance environment. Keep it professional.',
+    '',
+    '### 05 | COMMAND AUTHORITY',
+    'Follow the directives of the **RIBBITFATHER** and high-level officers. Decisions regarding server security are final.',
+    '',
+    '*Failure to comply with these protocols will result in a suspension of deployment or total server ejection.*',
+    '',
+    '**PROTOCOL INITIATED.**'
+].join('\n');
 
 const ROLES = {
     TADPOLE: '1135140834581414088',
@@ -194,6 +220,38 @@ client.once('clientReady', () => {
     setInterval(pollPendingRoles, 30_000);
     // Auto-post GIF every 5 minutes
     setInterval(autoPostGif, GIF_INTERVAL_MS);
+});
+
+// ─── Command Handler ─────────────────────────────────────────────────────────
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return;
+    if (!message.content.startsWith('!')) return;
+
+    const args = message.content.slice(1).split(/ +/);
+    const command = args.shift()?.toLowerCase();
+
+    if (command === 'rules') {
+        const guild = message.guild;
+        if (!guild) return;
+
+        // Security: Only RIBBITFATHER can post rules
+        const member = await guild.members.fetch(message.author.id);
+        if (!member.roles.cache.has(ROLES.RIBBITFATHER)) {
+            return message.reply('❌ [ACCESS_DENIED] Restricted to higher clearance.').then(m => setTimeout(() => m.delete(), 5000));
+        }
+
+        const channel = guild.channels.cache.get(RULES_CHANNEL_ID) as TextChannel | undefined;
+        if (channel) {
+            if (RULES_HEADER_IMG) {
+                await channel.send({ content: SERVER_RULES, files: [RULES_HEADER_IMG] });
+            } else {
+                await channel.send(SERVER_RULES);
+            }
+            message.reply(`✅ Rules deployed to <#${RULES_CHANNEL_ID}>.`);
+        } else {
+            message.reply('❌ Rules channel not found.');
+        }
+    }
 });
 
 client.login(process.env.TOKEN);
