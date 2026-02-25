@@ -65,6 +65,12 @@ export default function ComingSoon() {
                     Establishing high-intensity downlink for early bird deployment.
                 </p>
 
+                <div style={{ marginBottom: '3rem' }}>
+                    <a href="https://www.whitelist.ribbitroyale.fun/" className="btnPortal">
+                        [ ACCESS_WHITELIST_PORTAL ]
+                    </a>
+                </div>
+
                 <form className="signupGroup" onSubmit={(e) => e.preventDefault()}>
                     <input
                         className="emailInput"

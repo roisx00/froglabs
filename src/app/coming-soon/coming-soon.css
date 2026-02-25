@@ -288,6 +288,46 @@
     letter-spacing: 4px;
 }
 
+.btnPortal {
+    display: inline-block;
+    background: #0A0101;
+    color: #ffdd00;
+    padding: 20px 40px;
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    border: var(--border-thick);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btnPortal:hover {
+    background: #ffdd00;
+    color: #0A0101;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(255, 221, 0, 0.3);
+    letter-spacing: 6px;
+}
+
+.btnPortal::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 221, 0, 0.5);
+    transition: left 0.5s;
+}
+
+.btnPortal:hover::before {
+    left: 100%;
+}
+
 .socials {
     display: flex;
     gap: 60px;
