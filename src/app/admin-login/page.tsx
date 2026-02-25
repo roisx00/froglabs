@@ -8,7 +8,7 @@ export default function AdminLogin() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === 'internxbt123') {
+        if (password === 'isra98@A') {
             localStorage.setItem('isAdmin', 'true');
             window.location.href = '/admin';
         } else {

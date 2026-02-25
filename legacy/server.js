@@ -43,7 +43,7 @@ const XP_THRESHOLDS = {
   CROAK_KNIGHT: 3000
 };
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'internxbt123';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'isra98@A';
 
 const DATA_FILE = 'applications.json';
 const TASKS_FILE = 'tasks.json';

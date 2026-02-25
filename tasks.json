@@ -1,8 +1,8 @@
 [
   {
     "id": "t1",
-    "title": "Follow @INTERNXBT on X",
-    "link": "https://x.com/Internxbt",
+    "title": "Follow @22RibbitRoyale on X",
+    "link": "https://x.com/22RibbitRoyale",
     "xpReward": 50,
     "type": "social",
     "location": "registration",
@@ -29,7 +29,7 @@
   {
     "id": "t1771682365115",
     "title": "Comment on Transmission",
-    "link": "https://x.com/internxbt",
+    "link": "https://x.com/22RibbitRoyale",
     "xpReward": 50,
     "type": "social",
     "location": "registration",
@@ -38,7 +38,7 @@
   {
     "id": "t1771684313667",
     "title": "Registration Task: Quote",
-    "link": "https://x.com/internxbt",
+    "link": "https://x.com/22RibbitRoyale",
     "xpReward": 100,
     "type": "social",
     "location": "registration",
@@ -47,7 +47,7 @@
   {
     "id": "t1771684326469",
     "title": "Dashboard Task: Like",
-    "link": "https://x.com/internxbt",
+    "link": "https://x.com/22RibbitRoyale",
     "xpReward": 50,
     "type": "social",
     "location": "dashboard",

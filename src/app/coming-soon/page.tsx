@@ -79,7 +79,7 @@ export default function ComingSoon() {
                     <a href="https://discord.gg/5g6M2vT6W7" target="_blank" rel="noopener noreferrer" className="socialLink">
                         [ Discord_Intel ]
                     </a>
-                    <a href="https://x.com/22Ribbits" target="_blank" rel="noopener noreferrer" className="socialLink">
+                    <a href="https://x.com/22RibbitRoyale" target="_blank" rel="noopener noreferrer" className="socialLink">
                         [ X_Communications ]
                     </a>
                 </div>
