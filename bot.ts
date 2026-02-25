@@ -29,7 +29,13 @@ const client = new Client({
 const GUILD_ID = process.env.DISCORD_GUILD_ID!;
 const ANNOUNCE_CHANNEL_ID = process.env.ANNOUNCE_CHANNEL_ID || '';
 const GIF_CHANNEL_ID = '1474437615229997218';
-const GIF_LINK = 'https://tenor.com/d4DvEl0hB4.gif';
+const GIF_LINKS = [
+    'https://tenor.com/d4DvEl0hB4.gif',
+    'https://tenor.com/fEYpjvrrdzm.gif',
+    'https://tenor.com/k0mNvxyUupc.gif',
+    'https://tenor.com/bVGuXZjRXGn.gif',
+    'https://tenor.com/s9zVyLdrOB0.gif'
+];
 const GIF_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 
 const ROLES = {
@@ -73,8 +79,9 @@ async function autoPostGif() {
         if (!guild) return;
         const channel = guild.channels.cache.get(GIF_CHANNEL_ID) as TextChannel | undefined;
         if (channel) {
-            await channel.send(GIF_LINK);
-            console.log(`[Bot] 📺 Auto-posted GIF to ${channel.name}`);
+            const randomGif = GIF_LINKS[Math.floor(Math.random() * GIF_LINKS.length)];
+            await channel.send(randomGif);
+            console.log(`[Bot] 📺 Auto-posted random GIF to ${channel.name}`);
         }
     } catch (err) {
         console.error('[Bot] Auto-post GIF error:', err);
