@@ -38,7 +38,7 @@ const GIF_LINKS = [
 ];
 const GIF_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 const RULES_CHANNEL_ID = '1135228182065328148';
-const RULES_HEADER_IMG = ''; // Placeholder for generated image
+const RULES_HEADER_IMG = 'C:\\Users\\USER\\.gemini\\antigravity\\brain\\de732f90-d978-4f7c-bedf-50b2bfc2e657\\header_rule_1772009245229.png';
 
 const SERVER_RULES = [
     '# 🐸 RIBBIT ROYALE: COMMAND PROTOCOLS',
