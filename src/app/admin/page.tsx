@@ -8,7 +8,8 @@ const ROLE_DISPLAY: Record<string, string> = {
     '1153652478508802068': 'RIBBIT RUNNER',
     '1149718327388811314': 'CROAK KNIGHT',
     '1155236969534726269': 'ROYAL RIBBIT',
-    '1135129228183093308': 'RIBBITFATHER'
+    '1135129228183093308': 'GTD',
+    '1135128626224971787': 'MANAGER'
 };
 
 const BLANK_TASK = { title: '', link: '', xpReward: '50', type: 'social', actionType: 'quote' };
@@ -24,8 +25,10 @@ export default function AdminPanel() {
     const [activeTab, setActiveTab] = useState<'applications' | 'registration' | 'dashboard'>('applications');
     const [newTask, setNewTask] = useState({ ...BLANK_TASK });
     const [savingTask, setSavingTask] = useState(false);
+    const [hasMounted, setHasMounted] = useState(false);
 
     useEffect(() => {
+        setHasMounted(true);
         if (localStorage.getItem('isAdmin') !== 'true') {
             window.location.href = '/admin-login';
             return;
@@ -114,7 +117,8 @@ export default function AdminPanel() {
 
     const exportCSV = () => {
         const ROLE_ORDER = [
-            { id: '1135129228183093308', name: 'RIBBITFATHER' },
+            { id: '1135128626224971787', name: 'MANAGER' },
+            { id: '1135129228183093308', name: 'GTD' },
             { id: '1155236969534726269', name: 'ROYAL RIBBIT' },
             { id: '1149718327388811314', name: 'CROAK KNIGHT' },
             { id: '1153652478508802068', name: 'RIBBIT RUNNER' },
@@ -163,10 +167,10 @@ export default function AdminPanel() {
         URL.revokeObjectURL(url);
     };
 
-    if (loading) return (
+    if (!hasMounted || loading) return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
             <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', fontSize: '0.85rem', letterSpacing: '2px' }}>
-                LOADING CONTROL CENTER...
+                {loading ? 'LOADING CONTROL CENTER...' : 'SYNCHRONIZING SECURE ENVIRONMENT...'}
             </span>
         </div>
     );
@@ -185,8 +189,8 @@ export default function AdminPanel() {
         return matchesSearch && matchesStatus;
     });
 
-    const regTasks = missions.filter(m => m.location === 'registration');
-    const dashTasks = missions.filter(m => m.location === 'dashboard');
+    const regTasks = (missions || []).filter(m => m.location === 'registration');
+    const dashTasks = (missions || []).filter(m => m.location === 'dashboard');
 
     // Shared task form component inline
     const TaskForm = ({ location }: { location: 'registration' | 'dashboard' }) => (

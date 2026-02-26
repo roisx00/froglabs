@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { signOut } from 'next-auth/react';
+import ConsigliereAgent from '@/components/ConsigliereAgent';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -310,6 +311,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                     <span className="footer-text">powered by 22ribbits</span>
                 </footer>
             </div>
+            <ConsigliereAgent app={app} />
         </div>
     );
 }

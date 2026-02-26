@@ -25,6 +25,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
         return NextResponse.json({ success: true });
     } catch (error) {
+        console.error('[Approve API Error]:', error);
         return NextResponse.json({ error: 'Internal error' }, { status: 500 });
     }
 }

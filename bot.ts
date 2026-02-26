@@ -1,6 +1,8 @@
 import { Client, GatewayIntentBits, Partials, TextChannel } from 'discord.js';
 import * as dotenv from 'dotenv';
 import admin from 'firebase-admin';
+import * as fs from 'fs';
+import * as path from 'path';
 
 dotenv.config();
 
@@ -28,17 +30,49 @@ const client = new Client({
 // ─── Config ───────────────────────────────────────────────────────────────────
 const GUILD_ID = process.env.DISCORD_GUILD_ID!;
 const ANNOUNCE_CHANNEL_ID = process.env.ANNOUNCE_CHANNEL_ID || '';
-const GIF_CHANNEL_ID = '1474437615229997218';
-const GIF_LINKS = [
-    'https://tenor.com/d4DvEl0hB4.gif',
-    'https://tenor.com/fEYpjvrrdzm.gif',
-    'https://tenor.com/k0mNvxyUupc.gif',
-    'https://tenor.com/bVGuXZjRXGn.gif',
-    'https://tenor.com/s9zVyLdrOB0.gif'
-];
-const GIF_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 const RULES_CHANNEL_ID = '1135228182065328148';
-const RULES_HEADER_IMG = 'C:\\Users\\USER\\.gemini\\antigravity\\brain\\de732f90-d978-4f7c-bedf-50b2bfc2e657\\header_rule_1772009245229.png';
+const RESOURCES_CHANNEL_ID = '1153205831970586664';
+const HOW_TO_WHITELIST_CHANNEL_ID = '1153313313443291156';
+
+// Portability: Use relative path for header images
+const RULES_HEADER_IMG = './rules_header.png';
+const LINKS_HEADER_IMG = './links_header.png';
+const WL_HEADER_IMG = './wl_header.png';
+
+const HOW_TO_WHITELIST_GUIDE = [
+    '# 🐸 OPERATION: WHITELIST PROCUREMENT',
+    'Welcome to the secure perimeter. To earn your status in the **Ribbit Royale**, you must complete the following directives. Operational excellence is mandatory.',
+    '',
+    '### 📡 01 | DATABASE ENTRY',
+    'Initiate your credentials at our secure procurement portal:',
+    '> **👉 [WHITELIST PORTAL](https://www.whitelist.ribbitroyale.fun/)**',
+    '',
+    '### 🔋 02 | XP ACCUMULATION',
+    'Accumulate enough XP to bypass security filters. Clearance is granted through active participation:',
+    '• **Chat Intel**: Engage with units in the server to generate Chat XP.',
+    '• **Social Missions**: Execute tasks on the portal to generate Social XP.',
+    '',
+    '### 🎖️ 03 | RANK ASCENSION',
+    'Higher clearance levels significantly increase your probability of final approval:',
+    '• **Ribbit Runner**: Standard recognition (1,000 Chat XP).',
+    '• **Royal Ribbit**: High-level clearance (3,000 Chat XP).',
+    '• **Croak Knight**: Elite contributor status (3,000 Social XP).',
+    '',
+    '### 🛡️ 04 | COMMAND REVIEW',
+    'Upon submission of your application and XP verification, the **MANAGERS** will conduct a final review. Your status will be updated via the secure portal and reflected in your roles.',
+    '',
+    '> **"STAY ACTIVE. STAY VIGILANT."**',
+    '',
+    '***'
+].join('\n');
+
+const TRUSTABLE_LINKS = [
+    'Below links are only trustable links:',
+    '',
+    'Twitter: https://x.com/22RibbitRoyale',
+    'Website: https://www.ribbitroyale.fun',
+    'Whitelist portal: https://www.whitelist.ribbitroyale.fun/'
+].join('\n');
 
 const SERVER_RULES = [
     '# 🐸 RIBBIT ROYALE: COMMAND PROTOCOLS',
@@ -69,10 +103,10 @@ const ROLES = {
     RIBBIT_RUNNER: '1153652478508802068',
     CROAK_KNIGHT: '1149718327388811314',
     ROYAL_RIBBIT: '1155236969534726269',
-    RIBBITFATHER: '1135129228183093308'
+    RIBBITFATHER: '1135129228183093308', // GTD Role
+    MANAGERS: '1135128626224971787'     // Admin/Team Role
 };
 
-// 10 messages = 5 XP. 20-second cooldown per user between counted messages.
 const MSGS_PER_XP_AWARD = 10;
 const XP_PER_AWARD = 5;
 const SPAM_GUARD_MS = 20_000;
@@ -99,20 +133,6 @@ async function tryAssignRole(guild: any, userId: string, roleId: string, label: 
     }
 }
 
-async function autoPostGif() {
-    try {
-        const guild = await client.guilds.fetch(GUILD_ID).catch(() => null);
-        if (!guild) return;
-        const channel = guild.channels.cache.get(GIF_CHANNEL_ID) as TextChannel | undefined;
-        if (channel) {
-            const randomGif = GIF_LINKS[Math.floor(Math.random() * GIF_LINKS.length)];
-            await channel.send(randomGif);
-            console.log(`[Bot] 📺 Auto-posted random GIF to ${channel.name}`);
-        }
-    } catch (err) {
-        console.error('[Bot] Auto-post GIF error:', err);
-    }
-}
 
 async function checkPromotion(guild: any, userId: string, chatXP: number, socialXP: number, username: string) {
     const userRef = db.collection('applications').doc(userId);
@@ -122,7 +142,6 @@ async function checkPromotion(guild: any, userId: string, chatXP: number, social
 
     const updates: Record<string, any> = {};
 
-    // Chat XP path
     if (chatXP >= 3000 && app.chatRoleLevel !== 'royal_ribbit') {
         await tryAssignRole(guild, userId, ROLES.ROYAL_RIBBIT, 'ROYAL RIBBIT');
         updates.chatRoleLevel = 'royal_ribbit';
@@ -133,13 +152,11 @@ async function checkPromotion(guild: any, userId: string, chatXP: number, social
         updates.currentLevelRole = ROLES.RIBBIT_RUNNER;
     }
 
-    // Social XP path (web sets socialXP, bot promotes)
     if (socialXP >= 3000 && !app.xRoleAwarded) {
         await tryAssignRole(guild, userId, ROLES.CROAK_KNIGHT, 'CROAK KNIGHT');
         updates.xRoleAwarded = true;
     }
 
-    // Clear any pendingRoleId set by the web server
     if (app.pendingRoleId) {
         await tryAssignRole(guild, userId, app.pendingRoleId, app.pendingRoleId);
         updates.pendingRoleId = admin.firestore.FieldValue.delete();
@@ -150,8 +167,6 @@ async function checkPromotion(guild: any, userId: string, chatXP: number, social
     }
 }
 
-// ─── Watch for pendingRoleId changes from web server ─────────────────────────
-// Every 30 seconds, scan for any users that have a pendingRoleId set by Vercel
 async function pollPendingRoles() {
     try {
         const guild = await client.guilds.fetch(GUILD_ID).catch(() => null);
@@ -169,89 +184,155 @@ async function pollPendingRoles() {
     }
 }
 
-// ─── Message XP Handler ───────────────────────────────────────────────────────
+// ─── Combined Message Handler ────────────────────────────────────────────────
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
+
+    const content = message.content || '';
+    const userId = message.author.id;
+    const username = message.author.username;
+    const channelName = (message.channel as any).name || 'Private/DM';
+
+    // 🔔 CRITICAL DEBUG: Logs EVERY message the bot sees
+    console.log(`[Bot] 📨 In #${channelName} from ${username}: "${content.substring(0, 50)}"`);
+
+    // 1. Handle Commands
+    if (content.startsWith('!')) {
+        try {
+            const args = content.slice(1).split(/ +/);
+            const command = args.shift()?.toLowerCase();
+
+            if (command === 'debug') {
+                const member = await message.guild?.members.fetch(userId);
+                const roles = member?.roles.cache.map(r => `${r.name} (${r.id})`).join(', ');
+                await message.reply(`🛠️ **Debug Info**\n**Channel:** <#${message.channel.id}>\n**ID:** ${message.channel.id}\n**Roles:** ${roles}`);
+                return;
+            }
+
+            if (command === 'rules') {
+                if (!message.guild) return;
+
+                const member = await message.guild.members.fetch(userId);
+                const hasRole = member.roles.cache.has(ROLES.MANAGERS);
+
+                console.log(`[Bot] 🛡️ Rules command by ${username}. Permission: ${hasRole ? 'ALLOWED' : 'DENIED'}`);
+
+                if (!hasRole) {
+                    return message.reply(`❌ [ACCESS_DENIED] Restricted. (Missing Role: MANAGERS)`).then(m => setTimeout(() => m.delete(), 5000));
+                }
+
+                const channel = message.guild.channels.cache.get(RULES_CHANNEL_ID) as TextChannel | undefined;
+                if (channel) {
+                    console.log(`[Bot] 📜 Sending rules to #${channel.name}...`);
+
+                    const files = [];
+                    if (fs.existsSync(RULES_HEADER_IMG)) {
+                        files.push(RULES_HEADER_IMG);
+                    } else {
+                        console.log(`[Bot] ⚠️ Header image not found at ${path.resolve(RULES_HEADER_IMG)} - sending without image.`);
+                    }
+
+                    await channel.send({ content: SERVER_RULES, files });
+                    await message.reply(`✅ Rules deployed to <#${RULES_CHANNEL_ID}>.`);
+                } else {
+                    console.log(`[Bot] ❌ Target channel not found: ${RULES_CHANNEL_ID}`);
+                    await message.reply(`❌ Target channel not found. (ID: ${RULES_CHANNEL_ID})`);
+                }
+                return;
+            }
+
+            if (command === 'links' || command === 'link') {
+                if (!message.guild) return;
+
+                const member = await message.guild.members.fetch(userId);
+                const hasRole = member.roles.cache.has(ROLES.MANAGERS);
+
+                if (!hasRole) {
+                    return message.reply(`❌ [ACCESS_DENIED] Restricted. (Missing Role: MANAGERS)`).then(m => setTimeout(() => m.delete(), 5000));
+                }
+
+                const channel = message.guild.channels.cache.get(RESOURCES_CHANNEL_ID) as TextChannel | undefined;
+                if (channel) {
+                    console.log(`[Bot] 📜 Sending links to #${channel.name}...`);
+                    const files = [];
+                    if (fs.existsSync(LINKS_HEADER_IMG)) {
+                        files.push(LINKS_HEADER_IMG);
+                    }
+                    await channel.send({ content: TRUSTABLE_LINKS, files });
+                    await message.reply(`✅ Links deployed to <#${RESOURCES_CHANNEL_ID}>.`);
+                } else {
+                    console.log(`[Bot] ❌ Target channel not found: ${RESOURCES_CHANNEL_ID}`);
+                    await message.reply(`❌ Target channel not found. (ID: ${RESOURCES_CHANNEL_ID})`);
+                }
+                return;
+            }
+
+            if (command === 'whitelist') {
+                if (!message.guild) return;
+
+                const member = await message.guild.members.fetch(userId);
+                const hasRole = member.roles.cache.has(ROLES.RIBBITFATHER);
+
+                if (!hasRole) {
+                    return message.reply(`❌ [ACCESS_DENIED] Restricted. (Missing Role: ${ROLES.RIBBITFATHER})`).then(m => setTimeout(() => m.delete(), 5000));
+                }
+
+                const channel = message.guild.channels.cache.get(HOW_TO_WHITELIST_CHANNEL_ID) as TextChannel | undefined;
+                if (channel) {
+                    console.log(`[Bot] 📜 Sending WL guide to #${channel.name}...`);
+                    const files = [];
+                    if (fs.existsSync(WL_HEADER_IMG)) {
+                        files.push(WL_HEADER_IMG);
+                    }
+                    await channel.send({ content: HOW_TO_WHITELIST_GUIDE, files });
+                    await message.reply(`✅ Whitelist guide deployed to <#${HOW_TO_WHITELIST_CHANNEL_ID}>.`);
+                } else {
+                    console.log(`[Bot] ❌ Target channel not found: ${HOW_TO_WHITELIST_CHANNEL_ID}`);
+                    await message.reply(`❌ Target channel not found. (ID: ${HOW_TO_WHITELIST_CHANNEL_ID})`);
+                }
+                return;
+            }
+        } catch (err) {
+            console.error('[Bot] ❌ Command Error:', err);
+            message.reply('❌ [SYSTEM_ERROR] Check terminal logs.').catch(() => { });
+        }
+    }
+
+    // 2. Handle XP tracking
     if (!message.guild || message.guild.id !== GUILD_ID) return;
 
-    const userId = message.author.id;
     const now = Date.now();
-
-    // 3-second spam guard — ignores messages sent too rapidly
-    const lastMsg = spamGuard.get(userId) || 0;
-    if (now - lastMsg < SPAM_GUARD_MS) return;
+    if (now - (spamGuard.get(userId) || 0) < SPAM_GUARD_MS) return;
     spamGuard.set(userId, now);
 
     try {
         const userRef = db.collection('applications').doc(userId);
         const snap = await userRef.get();
-        if (!snap.exists) return; // Not in the whitelist system
+        if (!snap.exists) return;
 
         const data = snap.data()!;
         const newCount = (data.messageCount || 0) + 1;
         const updates: Record<string, any> = { messageCount: newCount };
 
-        // Award 5 XP every 10 messages
-        const prevAwards = Math.floor((newCount - 1) / MSGS_PER_XP_AWARD);
-        const newAwards = Math.floor(newCount / MSGS_PER_XP_AWARD);
-        let newChatXP = data.chatXP || 0;
-
-        if (newAwards > prevAwards) {
-            newChatXP += XP_PER_AWARD;
+        if (Math.floor(newCount / MSGS_PER_XP_AWARD) > Math.floor((newCount - 1) / MSGS_PER_XP_AWARD)) {
+            const newChatXP = (data.chatXP || 0) + XP_PER_AWARD;
             updates.chatXP = newChatXP;
-            console.log(`[Bot] 🎯 +${XP_PER_AWARD} XP → ${message.author.username} (msg #${newCount}, total XP: ${newChatXP})`);
-            await checkPromotion(message.guild, userId, newChatXP, data.socialXP || 0, message.author.username);
+            console.log(`[Bot] 🎯 +${XP_PER_AWARD} XP → ${username} (Total: ${newChatXP})`);
+            await checkPromotion(message.guild, userId, newChatXP, data.socialXP || 0, username);
         } else {
-            console.log(`[Bot] 💬 msg #${newCount} from ${message.author.username} (${MSGS_PER_XP_AWARD - (newCount % MSGS_PER_XP_AWARD)} msgs until next XP)`);
+            console.log(`[Bot] 💬 ${username} msg #${newCount}`);
         }
 
         await userRef.update(updates);
     } catch (err) {
-        console.error('[Bot] messageCreate error:', err);
+        console.error('[Bot] XP error:', err);
     }
 });
 
-// ─── Ready ────────────────────────────────────────────────────────────────────
 client.once('clientReady', () => {
-    console.log(`✅ [Bot] Logged in as ${client.user?.tag}`);
-    console.log(`📡 Serving guild: ${GUILD_ID}`);
-    console.log(`💬 XP rate: +${XP_PER_AWARD} XP per ${MSGS_PER_XP_AWARD} messages (${SPAM_GUARD_MS / 1000}s spam guard)`);
-    // Poll for pending roles from web server every 30 seconds
+    console.log(`✅ [Bot] Online as ${client.user?.tag}`);
+    console.log(`📡 Serving: ${GUILD_ID}`);
     setInterval(pollPendingRoles, 30_000);
-    // Auto-post GIF every 5 minutes
-    setInterval(autoPostGif, GIF_INTERVAL_MS);
-});
-
-// ─── Command Handler ─────────────────────────────────────────────────────────
-client.on('messageCreate', async (message) => {
-    if (message.author.bot) return;
-    if (!message.content.startsWith('!')) return;
-
-    const args = message.content.slice(1).split(/ +/);
-    const command = args.shift()?.toLowerCase();
-
-    if (command === 'rules') {
-        const guild = message.guild;
-        if (!guild) return;
-
-        // Security: Only RIBBITFATHER can post rules
-        const member = await guild.members.fetch(message.author.id);
-        if (!member.roles.cache.has(ROLES.RIBBITFATHER)) {
-            return message.reply('❌ [ACCESS_DENIED] Restricted to higher clearance.').then(m => setTimeout(() => m.delete(), 5000));
-        }
-
-        const channel = guild.channels.cache.get(RULES_CHANNEL_ID) as TextChannel | undefined;
-        if (channel) {
-            if (RULES_HEADER_IMG) {
-                await channel.send({ content: SERVER_RULES, files: [RULES_HEADER_IMG] });
-            } else {
-                await channel.send(SERVER_RULES);
-            }
-            message.reply(`✅ Rules deployed to <#${RULES_CHANNEL_ID}>.`);
-        } else {
-            message.reply('❌ Rules channel not found.');
-        }
-    }
 });
 
 client.login(process.env.TOKEN);

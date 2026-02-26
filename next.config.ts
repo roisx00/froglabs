@@ -8,6 +8,15 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: '/',
+        has: [{ type: 'host', value: 'ribbitroyale.fun' }],
+        destination: '/coming-soon',
+      },
+    ];
+  },
 };
 
 export default nextConfig;
