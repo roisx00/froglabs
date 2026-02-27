@@ -215,7 +215,7 @@ export default function MysteryBoxModal({ onSuccess }: { onSuccess: () => void }
                 }
 
                 .button-container {
-                    margin-top: 40px;
+                    margin: 40px auto 0;
                     width: 100%;
                     max-width: 450px;
                 }
