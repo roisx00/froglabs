@@ -5,6 +5,7 @@ import useSWR from 'swr';
 import { signOut } from 'next-auth/react';
 import ConsigliereAgent from '@/components/ConsigliereAgent';
 import XPLeaderboard from '@/components/XPLeaderboard';
+import MysteryBoxModal from '@/components/MysteryBoxModal';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -30,7 +31,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
     const [missionStates, setMissionStates] = useState<Record<string, any>>({});
     const [tick, setTick] = useState(0); // used to re-render timers
 
-    const { data: appData } = useSWR('/api/application', fetcher, {
+    const { data: appData, mutate: mutateApp } = useSWR('/api/application', fetcher, {
         fallbackData: initialApp,
         refreshInterval: 5000
     });
@@ -317,6 +318,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                     <span className="footer-text">powered by 22ribbits</span>
                 </footer>
             </div>
+            <MysteryBoxModal onSuccess={() => mutateApp()} />
             <ConsigliereAgent app={app} />
         </div>
     );
