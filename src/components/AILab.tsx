@@ -181,12 +181,7 @@ export default function AILab() {
                         </button>
                     </div>
 
-                    <button
-                        onClick={() => window.location.href = '/dashboard/ai-arena/battle-royale'}
-                        className="w-full mt-10 py-5 bg-white text-black font-black rounded-2xl hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all flex items-center justify-center gap-3 uppercase tracking-tighter"
-                    >
-                        <span>≡ƒÜÇ Enter Battle Royale (30 XP)</span>
-                    </button>
+
                 </div>
             )}
 

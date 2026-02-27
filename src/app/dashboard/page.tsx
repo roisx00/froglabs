@@ -164,7 +164,6 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                     </div>
                     <span className="nav-brand-text">22 Ribbit / User Panel</span>
                 </div>
-                <button onClick={() => window.location.href = '/dashboard/toxic-agents'} className="btn-arena" style={{ marginRight: '12px', background: '#00ffa3', color: '#000' }}>To The Arena ⚔️</button>
                 <button onClick={() => signOut()} className="btn-logout">Sign Out</button>
             </header>
 
