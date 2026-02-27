@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { signOut } from 'next-auth/react';
 import ConsigliereAgent from '@/components/ConsigliereAgent';
+import DailySpinWheel from '@/components/DailySpinWheel';
+import XPLeaderboard from '@/components/XPLeaderboard';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -19,7 +21,7 @@ const DISCORD_THRESHOLDS = { RIBBIT_RUNNER: 1000, ROYAL_RIBBIT: 3000 };
 const X_TASKS_THRESHOLD = 3000;
 const TEN_MINUTES = 10 * 60 * 1000;
 
-function formatXP(n: number) { return n.toLocaleString(); }
+function formatXP(n: number) { return n.toLocaleString('en-US'); }
 
 export default function Dashboard({ initialUser, initialApp, initialMissions }: any = {}) {
     const [user, setUser] = useState<any>(initialUser || null);
@@ -163,6 +165,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                     </div>
                     <span className="nav-brand-text">22 Ribbit / User Panel</span>
                 </div>
+                <button onClick={() => window.location.href = '/dashboard/ai-arena'} className="btn-arena" style={{ marginRight: '12px' }}>AI Arena 🤖</button>
                 <button onClick={() => signOut()} className="btn-logout">Sign Out</button>
             </header>
 
@@ -199,6 +202,12 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                         <div className="stat-value">{formatXP(totalXP)}</div>
                         <div className="stat-sub">Tasks: {formatXP(socialXP)} &middot; Chat: {formatXP(chatXP)}</div>
                     </div>
+                </div>
+
+                {/* Engagement Features */}
+                <div className="grid lg:grid-cols-2 gap-8 mb-8 mt-8">
+                    <DailySpinWheel />
+                    <XPLeaderboard />
                 </div>
 
                 {/* XP Progress */}

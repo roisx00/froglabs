@@ -28,6 +28,8 @@ export default function ConsigliereAgent({ app }: ConsigliereAgentProps) {
             msg = `You're close to being a Runner. Hit the Discord and make some noise. Only ${1000 - chatXP} XP to go.`;
         } else if (chatXP < 3000) {
             msg = `You're a Runner now, but can you be Royal? Prove it in the chat. ${3000 - chatXP} XP left for the crown.`;
+        } else if (socialXP >= 10) {
+            msg = "The Turf War is active. Take your 10 XP and head to the Arena. The syndicate needs winners.";
         } else {
             msg = "You've got the XP, now file that application properly. The syndicate is waiting.";
         }

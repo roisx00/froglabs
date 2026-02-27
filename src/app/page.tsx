@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Dashboard from './dashboard/page';
 import { useSession, signIn, signOut } from 'next-auth/react';
+import XUsernameForm from '@/components/XUsernameForm';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -190,6 +191,10 @@ export default function Home() {
             }}>
               Complete all directives to submit your application for GTD Mint
             </p>
+          </div>
+
+          <div className="mb-6">
+            <XUsernameForm />
           </div>
 
           <div className="glass-card" style={{ marginTop: 0 }}>
