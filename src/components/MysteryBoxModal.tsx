@@ -352,14 +352,21 @@ export default function MysteryBoxModal({ onSuccess }: { onSuccess: () => void }
 
                 @media (max-width: 640px) {
                     .mystery-modal-content {
-                        padding: 40px 20px;
+                        padding: 30px 15px;
                         border-radius: 35px;
+                        min-height: auto;
+                        width: 92%;
                     }
-                    .main-title { font-size: 2.2rem; }
-                    .chest-wrapper { width: 280px; height: 280px; }
-                    .reward-card-premium { padding: 40px 20px; }
-                    .reward-amount { font-size: 2.5rem; }
-                    .reward-icon-reveal { font-size: 4rem; }
+                    .main-title { font-size: 1.8rem; letter-spacing: -1px; }
+                    .victory-text { font-size: 1.8rem; margin-bottom: 20px; }
+                    .chest-wrapper { width: 220px; height: 220px; }
+                    .reward-bloom-stage { padding: 15px; margin-bottom: 25px; }
+                    .reward-card-premium { padding: 30px 15px; border-radius: 25px; }
+                    .reward-amount { font-size: 2.2rem; letter-spacing: -1px; }
+                    .reward-icon-reveal { font-size: 3.5rem; margin-bottom: 10px; }
+                    .reward-desc { font-size: 0.75rem; letter-spacing: 2px; }
+                    .btn-unbox { font-size: 1.1rem; padding: 18px 0; border-radius: 18px; }
+                    .btn-claim-exit { padding: 15px 35px; font-size: 1rem; }
                 }
             `}</style>
         </div>
