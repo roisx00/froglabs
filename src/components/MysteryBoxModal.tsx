@@ -111,7 +111,10 @@ export default function MysteryBoxModal({ onSuccess }: { onSuccess: () => void }
                             </div>
                         </div>
 
-                        <button className="btn-claim-exit" onClick={() => setStatus('ineligible')}>
+                        <button className="btn-claim-exit" onClick={() => {
+                            setStatus('ineligible');
+                            onSuccess(); // Ensure fresh data on close
+                        }}>
                             CLAIM REWARD
                         </button>
                     </div>
