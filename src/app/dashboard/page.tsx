@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { signOut } from 'next-auth/react';
 import ConsigliereAgent from '@/components/ConsigliereAgent';
-import DailySpinWheel from '@/components/DailySpinWheel';
 import XPLeaderboard from '@/components/XPLeaderboard';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -205,8 +204,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                 </div>
 
                 {/* Engagement Features */}
-                <div className="grid lg:grid-cols-2 gap-8 mb-8 mt-8">
-                    <DailySpinWheel />
+                <div className="mb-8 mt-8">
                     <XPLeaderboard />
                 </div>
 
