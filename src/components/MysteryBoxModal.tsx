@@ -38,7 +38,7 @@ export default function MysteryBoxModal({ onSuccess }: { onSuccess: () => void }
             const res = await fetch('/api/mystery-box', { method: 'POST' });
             const data = await res.json();
 
-            // Professional anticipation delay
+            // Premium vibration and excitement build-up
             setTimeout(() => {
                 if (data.success) {
                     setReward(data);
@@ -48,7 +48,7 @@ export default function MysteryBoxModal({ onSuccess }: { onSuccess: () => void }
                     alert('Could not open: ' + (data.reason || 'Unknown error'));
                     setStatus('ineligible');
                 }
-            }, 1800);
+            }, 2500);
         } catch (err) {
             console.error("Box open failed:", err);
             setStatus('idle');
@@ -61,71 +61,58 @@ export default function MysteryBoxModal({ onSuccess }: { onSuccess: () => void }
     return (
         <div className="mystery-modal-overlay">
             <div className="mystery-modal-content">
-                <div className="corner-decor top-left"></div>
-                <div className="corner-decor bottom-right"></div>
+                <div className="premium-glow-bg"></div>
 
                 {status !== 'opened' ? (
                     <div className="mystery-box-container">
-                        <h1 className="main-title">RIBBIT MYSTERY BOX</h1>
-                        <p className="subtitle">EARLY ACCESS REWARD &bull; {globalCount}/500 CLAIMED</p>
-
-                        <div className={`gift-box-wrapper ${status === 'opening' ? 'opening-shake' : 'idle-float'}`}>
-                            {/* Professional CSS/SVG Gift Box */}
-                            <svg className="professional-gift" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="boxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" style={{ stopColor: '#FFD700', stopOpacity: 1 }} />
-                                        <stop offset="100%" style={{ stopColor: '#FFA500', stopOpacity: 1 }} />
-                                    </linearGradient>
-                                    <filter id="shadowBox">
-                                        <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="rgba(0,0,0,0.2)" />
-                                    </filter>
-                                </defs>
-                                {/* Main Box Body */}
-                                <rect x="40" y="80" width="120" height="100" rx="8" fill="url(#boxGrad)" filter="url(#shadowBox)" />
-                                {/* Lid */}
-                                <rect x="35" y="70" width="130" height="30" rx="4" fill="#FFC107" filter="url(#shadowBox)" />
-                                {/* Vertical Ribbon */}
-                                <rect x="90" y="70" width="20" height="110" fill="#E91E63" />
-                                {/* Ribbon Loop Left */}
-                                <path d="M100 70 C 70 30, 40 50, 90 70" fill="none" stroke="#E91E63" strokeWidth="12" strokeLinecap="round" />
-                                {/* Ribbon Loop Right */}
-                                <path d="M100 70 C 130 30, 160 50, 110 70" fill="none" stroke="#E91E63" strokeWidth="12" strokeLinecap="round" />
-                                {/* Center Knot */}
-                                <circle cx="100" cy="70" r="10" fill="#C2185B" />
-                            </svg>
-                            {status === 'opening' && <div className="opening-glow"></div>}
+                        <div className="header-stack">
+                            <h1 className="main-title">RIBBIT MYSTERY BOX</h1>
+                            <div className="badge">
+                                <span>{globalCount}/500 CLAIMED</span>
+                            </div>
                         </div>
 
-                        <button
-                            className={`btn-primary-open ${status === 'opening' ? 'disabled' : ''}`}
-                            onClick={handleOpen}
-                            disabled={status === 'opening'}
-                        >
-                            {status === 'opening' ? 'UNBOXING...' : 'OPEN BOX'}
-                        </button>
+                        <div className={`chest-wrapper ${status === 'opening' ? 'intense-vibration' : 'idle-float'}`}>
+                            <img src="/img/mystery_box_v4.png" alt="Mystery Box" className="mystery-chest-img" />
+                            {status === 'opening' && <div className="opening-burst"></div>}
+                        </div>
+
+                        <div className="button-container">
+                            <button
+                                className={`btn-unbox ${status === 'opening' ? 'opening' : ''}`}
+                                onClick={handleOpen}
+                                disabled={status === 'opening'}
+                            >
+                                {status === 'opening' ? 'UNLOCKING...' : 'OPEN BOX'}
+                            </button>
+                        </div>
                     </div>
                 ) : (
-                    <div className="reward-container">
-                        <div className=" confetti-rain"></div>
-                        <h2 className="victory-title">CONGRATULATIONS!</h2>
-                        <div className="reward-card-focus">
-                            {reward?.rewardType === 'xp' ? (
-                                <div className="reward-content">
-                                    <span className="reward-icon-large">⚡</span>
-                                    <span className="reward-value">+{reward.xpAmount} XP</span>
-                                    <span className="reward-label">SOCIAL EXPERIENCE</span>
-                                </div>
-                            ) : (
-                                <div className="reward-content">
-                                    <span className="reward-icon-large">👑</span>
-                                    <span className="reward-value">{reward.roleName}</span>
-                                    <span className="reward-label">DISCORD ROLE UNLOCKED</span>
-                                </div>
-                            )}
+                    <div className="reward-reveal-container">
+                        <div className="celebration-particles"></div>
+                        <h2 className="victory-text">TREASURE UNLOCKED</h2>
+
+                        <div className="reward-bloom-stage">
+                            <div className="green-reveal-glow"></div>
+                            <div className="reward-card-premium">
+                                {reward?.rewardType === 'xp' ? (
+                                    <div className="reward-content">
+                                        <div className="reward-icon-reveal">⚡</div>
+                                        <div className="reward-amount">{reward.xpAmount} XP</div>
+                                        <div className="reward-desc text-green">SOCIAL EXPERIENCE POINT</div>
+                                    </div>
+                                ) : (
+                                    <div className="reward-content">
+                                        <div className="reward-icon-reveal">👑</div>
+                                        <div className="reward-amount">{reward.roleName}</div>
+                                        <div className="reward-desc text-green">DISCORD PRIVILEGE GRANTED</div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <button className="btn-secondary-close" onClick={() => setStatus('ineligible')}>
-                            CONTINUE TO DASHBOARD
+
+                        <button className="btn-claim-exit" onClick={() => setStatus('ineligible')}>
+                            CLAIM REWARD
                         </button>
                     </div>
                 )}
@@ -135,238 +122,244 @@ export default function MysteryBoxModal({ onSuccess }: { onSuccess: () => void }
                 .mystery-modal-overlay {
                     position: fixed;
                     inset: 0;
-                    background: rgba(0, 0, 0, 0.45);
-                    backdrop-filter: blur(12px);
+                    background: rgba(0, 0, 0, 0.6);
+                    backdrop-filter: blur(25px) saturate(180%);
                     z-index: 10000;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    animation: fadeIn 0.3s ease-out;
+                    animation: fadeIn 0.4s ease-out;
                 }
                 .mystery-modal-content {
                     background: #FFFFFF;
-                    border: 4px solid #1B4432;
-                    border-radius: 40px;
-                    padding: 80px 60px; /* Increased padding */
+                    border: 8px solid #1B4432;
+                    border-radius: 50px;
+                    padding: 60px;
                     width: 90%;
-                    max-width: 800px; /* BIGGER - Scaled up */
+                    max-width: 750px;
+                    min-height: 600px;
                     text-align: center;
-                    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.25);
+                    box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5), inset 0 0 40px rgba(27, 68, 50, 0.05);
                     position: relative;
                     overflow: hidden;
-                    animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+                    animation: popUpLarge 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
                 }
                 
-                .corner-decor {
+                .premium-glow-bg {
                     position: absolute;
-                    width: 140px;
-                    height: 140px;
-                    background: #1B4432;
-                    opacity: 0.04;
-                    z-index: 0;
+                    inset: 0;
+                    background: radial-gradient(circle at 50% 50%, rgba(45, 106, 79, 0.05) 0%, transparent 80%);
+                    pointer-events: none;
                 }
-                .top-left { top: -40px; left: -40px; border-radius: 50%; }
-                .bottom-right { bottom: -40px; right: -40px; border-radius: 50%; }
 
+                .header-stack {
+                    margin-bottom: 30px;
+                }
                 .main-title {
                     font-family: 'Inter', sans-serif;
-                    font-size: 3.5rem; /* BIGGER */
-                    font-weight: 900;
-                    color: #1B4432;
-                    margin-bottom: 8px;
+                    font-size: 3.2rem;
+                    font-weight: 950;
+                    color: #1A1A1A;
                     letter-spacing: -2px;
+                    line-height: 0.9;
+                    margin-bottom: 15px;
+                    text-transform: uppercase;
                 }
-                .victory-title {
-                    font-family: 'Inter', sans-serif;
-                    font-size: 3rem;
-                    font-weight: 800;
-                    color: #2D6A4F;
-                    margin-bottom: 24px;
-                }
-                .subtitle {
+                .badge {
+                    display: inline-block;
+                    background: #1B4432;
+                    color: #FFFFFF;
                     font-family: 'Space Mono', monospace;
-                    color: #2D6A4F;
-                    font-size: 0.9rem;
-                    font-weight: 700;
+                    font-size: 0.85rem;
+                    font-weight: 800;
+                    padding: 6px 16px;
+                    border-radius: 100px;
                     letter-spacing: 2px;
-                    opacity: 0.7;
-                    margin-bottom: 40px;
                 }
 
-                .gift-box-wrapper {
-                    margin: 20px auto 60px;
-                    width: 280px; /* BIGGER */
-                    height: 280px;
+                .chest-wrapper {
+                    position: relative;
+                    width: 400px;
+                    height: 400px;
+                    margin: 0 auto;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    position: relative;
                 }
-                .professional-gift {
+                .mystery-chest-img {
                     width: 100%;
                     height: 100%;
-                }
-                .idle-float {
-                    animation: float 3s ease-in-out infinite;
-                }
-                .opening-shake {
-                    animation: shake 0.4s infinite linear;
-                }
-                .opening-glow {
-                    position: absolute;
-                    inset: -40px;
-                    background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
-                    z-index: -1;
-                    filter: blur(20px);
-                    animation: pulseGlow 0.5s infinite alternate;
+                    object-fit: contain;
+                    filter: drop-shadow(0 30px 60px rgba(0,0,0,0.35));
                 }
 
-                .btn-primary-open {
+                .idle-float {
+                    animation: premiumFloat 4s ease-in-out infinite;
+                }
+                .intense-vibration {
+                    animation: vibrate 0.1s linear infinite;
+                }
+                .opening-burst {
+                    position: absolute;
+                    inset: 0;
+                    background: radial-gradient(circle, rgba(82, 183, 136, 0.4) 0%, transparent 70%);
+                    animation: burstScale 0.5s ease-out infinite;
+                    z-index: -1;
+                }
+
+                .button-container {
+                    margin-top: 40px;
+                    width: 100%;
+                    max-width: 450px;
+                }
+                .btn-unbox {
                     background: #1B4432;
                     border: none;
                     color: #FFFFFF;
                     font-family: 'Space Mono', monospace;
-                    font-weight: 800;
-                    font-size: 1.3rem;
-                    padding: 24px 60px;
-                    border-radius: 20px;
-                    cursor: pointer;
+                    font-weight: 900;
+                    font-size: 1.4rem;
+                    padding: 24px 0;
                     width: 100%;
-                    max-width: 400px;
-                    box-shadow: 0 10px 0 #0D261B;
+                    border-radius: 25px;
+                    cursor: pointer;
+                    box-shadow: 0 12px 0 #0D261B, 0 20px 40px rgba(27, 68, 50, 0.2);
                     transition: all 0.15s;
+                    text-transform: uppercase;
+                    letter-spacing: 4px;
                 }
-                .btn-primary-open:hover:not(.disabled) {
+                .btn-unbox:hover:not(:disabled) {
                     transform: translateY(-2px);
-                    box-shadow: 0 12px 0 #0D261B;
+                    box-shadow: 0 14px 0 #0D261B, 0 25px 50px rgba(27, 68, 50, 0.3);
                 }
-                .btn-primary-open:active:not(.disabled) {
-                    transform: translateY(6px);
+                .btn-unbox:active:not(:disabled) {
+                    transform: translateY(8px);
                     box-shadow: 0 4px 0 #0D261B;
                 }
-                .btn-primary-open.disabled {
-                    opacity: 0.7;
-                    cursor: not-allowed;
-                    transform: none;
-                    box-shadow: 0 6px 0 #0D261B;
-                }
 
-                .reward-card-focus {
-                    background: #F7FAF8;
-                    border: 3px solid #E0EBE4;
-                    border-radius: 32px;
-                    padding: 60px 40px;
-                    margin-bottom: 40px;
-                    animation: popScale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+                /* Reward Reveal Stage */
+                .reward-reveal-container {
+                    width: 100%;
+                    animation: fadeIn 0.8s ease-out;
                 }
-                .reward-content {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                }
-                .reward-icon-large {
-                    font-size: 6rem;
-                    margin-bottom: 20px;
-                    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
-                }
-                .reward-value {
-                    font-size: 3.5rem;
+                .victory-text {
+                    font-size: 3rem;
                     font-weight: 950;
                     color: #1B4432;
+                    letter-spacing: -1.5px;
+                    margin-bottom: 30px;
+                }
+                .reward-bloom-stage {
+                    position: relative;
+                    padding: 40px;
+                    margin-bottom: 40px;
+                }
+                .green-reveal-glow {
+                    position: absolute;
+                    inset: -50px;
+                    background: radial-gradient(circle, rgba(45, 106, 79, 0.6) 0%, rgba(82, 183, 136, 0.2) 40%, transparent 70%);
+                    filter: blur(40px);
+                    animation: glowRotate 4s linear infinite;
+                    z-index: 0;
+                }
+                .reward-card-premium {
+                    background: #FFFFFF;
+                    border: 4px solid #1B4432;
+                    border-radius: 35px;
+                    padding: 60px 40px;
+                    position: relative;
+                    z-index: 1;
+                    box-shadow: 0 30px 60px rgba(27, 68, 50, 0.15);
+                    animation: rewardPopUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.4);
+                }
+                .reward-icon-reveal {
+                    font-size: 7rem;
+                    margin-bottom: 20px;
+                    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+                }
+                .reward-amount {
+                    font-size: 4rem;
+                    font-weight: 1000;
+                    color: #1A1A1A;
                     letter-spacing: -2px;
                     line-height: 1;
                 }
-                .reward-label {
+                .reward-desc {
                     font-family: 'Space Mono', monospace;
-                    color: #2D6A4F;
-                    font-size: 1rem;
-                    font-weight: 700;
-                    margin-top: 10px;
-                    letter-spacing: 2px;
+                    font-size: 0.9rem;
+                    font-weight: 800;
+                    letter-spacing: 3px;
+                    margin-top: 15px;
                 }
+                .text-green { color: #2D6A4F; }
 
-                .btn-secondary-close {
+                .btn-claim-exit {
                     background: #FFFFFF;
                     border: 3px solid #1B4432;
                     color: #1B4432;
                     font-family: 'Space Mono', monospace;
-                    font-weight: 800;
+                    font-weight: 900;
                     font-size: 1.1rem;
-                    padding: 18px 40px;
-                    border-radius: 16px;
+                    padding: 20px 50px;
+                    border-radius: 20px;
                     cursor: pointer;
                     transition: all 0.2s;
                 }
-                .btn-secondary-close:hover {
+                .btn-claim-exit:hover {
                     background: #F0F7F3;
-                    transform: scale(1.02);
+                    letter-spacing: 2px;
                 }
 
-                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-                @keyframes popUp { 
-                    from { transform: scale(0.9) translateY(40px); opacity: 0; } 
-                    to { transform: scale(1) translateY(0); opacity: 1; } 
-                }
-                @keyframes float {
+                @keyframes premiumFloat {
                     0%, 100% { transform: translateY(0); }
-                    50% { transform: translateY(-20px); }
+                    50% { transform: translateY(-30px); }
                 }
-                @keyframes shake {
-                    0% { transform: rotate(0deg); }
-                    25% { transform: rotate(-3deg); }
-                    75% { transform: rotate(3deg); }
-                    100% { transform: rotate(0deg); }
+                @keyframes vibrate {
+                    0% { transform: translate(1px, 1px) rotate(0deg); }
+                    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+                    20% { transform: translate(-3px, 0px) rotate(1deg); }
+                    30% { transform: translate(3px, 2px) rotate(0deg); }
+                    40% { transform: translate(1px, -1px) rotate(1deg); }
+                    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+                    60% { transform: translate(-3px, 1px) rotate(0deg); }
+                    70% { transform: translate(3px, 1px) rotate(-1deg); }
+                    80% { transform: translate(-1px, -1px) rotate(1deg); }
+                    90% { transform: translate(1px, 2px) rotate(0deg); }
+                    100% { transform: translate(1px, -2px) rotate(-1deg); }
                 }
-                @keyframes pulseGlow {
-                    from { opacity: 0.3; transform: scale(0.8); }
-                    to { opacity: 1; transform: scale(1.2); }
+                @keyframes glowRotate {
+                    0% { transform: rotate(0deg) scale(1); opacity: 0.6; }
+                    50% { transform: rotate(180deg) scale(1.2); opacity: 1; }
+                    100% { transform: rotate(360deg) scale(1); opacity: 0.6; }
                 }
-                @keyframes popScale {
-                    from { transform: scale(0.6); opacity: 0; }
-                    to { transform: scale(1); opacity: 1; }
+                @keyframes burstScale {
+                    from { transform: scale(0.8); opacity: 0.8; }
+                    to { transform: scale(1.5); opacity: 0; }
+                }
+                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                @keyframes popUpLarge {
+                    from { transform: scale(0.85) translateY(60px); opacity: 0; }
+                    to { transform: scale(1) translateY(0); opacity: 1; }
+                }
+                @keyframes rewardPopUp {
+                    from { transform: scale(0) rotate(-10deg); opacity: 0; }
+                    to { transform: scale(1) rotate(0deg); opacity: 1; }
                 }
 
                 @media (max-width: 640px) {
                     .mystery-modal-content {
                         padding: 40px 20px;
-                        border-radius: 24px;
-                        width: 95%;
+                        border-radius: 35px;
                     }
-                    .main-title {
-                        font-size: 2rem;
-                        letter-spacing: -1px;
-                    }
-                    .victory-title {
-                        font-size: 1.8rem;
-                        margin-bottom: 16px;
-                    }
-                    .subtitle {
-                        font-size: 0.75rem;
-                        margin-bottom: 24px;
-                    }
-                    .gift-box-wrapper {
-                        width: 180px;
-                        height: 180px;
-                        margin: 10px auto 30px;
-                    }
-                    .btn-primary-open {
-                        font-size: 1.1rem;
-                        padding: 18px 40px;
-                    }
-                    .reward-card-focus {
-                        padding: 30px 20px;
-                        border-radius: 24px;
-                        margin-bottom: 24px;
-                    }
-                    .reward-icon-large {
-                        font-size: 4rem;
-                    }
-                    .reward-value {
-                        font-size: 2.2rem;
-                    }
-                    .reward-label {
-                        font-size: 0.8rem;
-                    }
+                    .main-title { font-size: 2.2rem; }
+                    .chest-wrapper { width: 280px; height: 280px; }
+                    .reward-card-premium { padding: 40px 20px; }
+                    .reward-amount { font-size: 2.5rem; }
+                    .reward-icon-reveal { font-size: 4rem; }
                 }
             `}</style>
         </div>
