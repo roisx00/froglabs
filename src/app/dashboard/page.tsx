@@ -164,7 +164,6 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                     </div>
                     <span className="nav-brand-text">22 Ribbit / User Panel</span>
                 </div>
-                <button onClick={() => window.location.href = '/dashboard/ai-arena'} className="btn-arena" style={{ marginRight: '12px' }}>AI Arena 🤖</button>
                 <button onClick={() => signOut()} className="btn-logout">Sign Out</button>
             </header>
 
