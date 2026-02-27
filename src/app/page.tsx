@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import Dashboard from './dashboard/page';
 import { useSession, signIn, signOut } from 'next-auth/react';
-import XUsernameForm from '@/components/XUsernameForm';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -193,12 +192,32 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="mb-6">
-            <XUsernameForm />
-          </div>
-
           <div className="glass-card" style={{ marginTop: 0 }}>
             <form onSubmit={handleSubmit}>
+
+              {/* X Username Registration */}
+              <div className="directive-card">
+                <span className="step-indicator">Step 00</span>
+                <div className="input-group" style={{ marginBottom: 0 }}>
+                  <label className="input-label" style={{ fontSize: '0.75rem' }}>
+                    What is your X Username? <span style={{ color: 'var(--accent-red)' }}>*</span>
+                  </label>
+                  <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)', padding: '0 12px' }}>
+                    <span style={{ color: 'var(--text-muted)', fontWeight: 700, paddingRight: '4px' }}>@</span>
+                    <input
+                      type="text"
+                      name="xUsername"
+                      placeholder="username"
+                      required
+                      style={{ border: 'none', background: 'transparent', padding: '12px 0', width: '100%', outline: 'none', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}
+                    />
+                  </div>
+                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'var(--text-muted)', marginTop: '8px', lineHeight: 1.5 }}>
+                    Link your account to verify your syndicate status.
+                  </p>
+                </div>
+              </div>
+
               {/* Task Directives */}
               {regMissions.map((m, idx) => (
                 <div key={m.id} className="directive-card">
