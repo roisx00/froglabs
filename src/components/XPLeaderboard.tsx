@@ -1,7 +1,6 @@
 'use client';
 
 import useSWR from 'swr';
-import { useState } from 'react';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -12,60 +11,81 @@ export default function XPLeaderboard() {
 
     const isLoading = !leaderboard && !error;
     const users = leaderboard || [];
+
     return (
-        <div className="bg-[#050505] border border-white/5 rounded-[2rem] p-6 md:p-8 h-full">
-            <div className="flex justify-between items-end mb-8">
+        <div className="glass-card" style={{ padding: '30px', margin: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px' }}>
                 <div>
-                    <h3 className="text-xl font-black text-white italic tracking-tighter mb-1">GLOBAL RANKINGS</h3>
-                    <p className="text-gray-500 text-[10px] uppercase tracking-[0.2em]">Top XP Earners</p>
+                    <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>GLOBAL RANKINGS</h3>
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '1.5px', textTransform: 'uppercase', margin: '4px 0 0 0' }}>Top Active Agents</p>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs">
+                <div style={{ fontSize: '1.5rem', background: 'rgba(0,0,0,0.05)', borderRadius: '50%', padding: '8px 12px' }}>
                     🏆
                 </div>
             </div>
 
-            <div className="space-y-3">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {isLoading ? (
-                    <div className="text-center text-gray-500 text-xs font-mono py-8 uppercase tracking-widest animate-pulse">
-                        Synchronizing real-time data...
+                    <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', padding: '32px 0', textTransform: 'uppercase', letterSpacing: '2px', animation: 'pulse 2s infinite' }}>
+                        Synchronizing live feeds...
                     </div>
                 ) : users.length === 0 ? (
-                    <div className="text-center text-gray-500 text-xs font-mono py-8 uppercase tracking-widest">
-                        No agents found in the system.
+                    <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', padding: '32px 0', textTransform: 'uppercase', letterSpacing: '2px' }}>
+                        No agents detected.
                     </div>
                 ) : (
-                    users.map((user: any, index: number) => (
-                        <div
-                            key={index}
-                            className={`flex items-center justify-between p-4 rounded-xl border transition-colors ${index === 0 ? 'bg-[#ffae00]/10 border-[#ffae00]/30' :
-                                index === 1 ? 'bg-gray-300/10 border-gray-300/30' :
-                                    index === 2 ? 'bg-[#b08d57]/10 border-[#b08d57]/30' :
-                                        'bg-white/5 border-transparent hover:border-white/10'
-                                }`}
-                        >
-                            <div className="flex items-center gap-4">
-                                <span className={`font-black text-sm w-4 ${index === 0 ? 'text-[#ffae00]' :
-                                    index === 1 ? 'text-gray-300' :
-                                        index === 2 ? 'text-[#b08d57]' :
-                                            'text-gray-600'
-                                    }`}>
-                                    #{user.rank}
-                                </span>
-                                <div>
-                                    <div className="font-bold text-sm text-white">{user.username}</div>
-                                    <div className="text-[9px] text-gray-500 uppercase tracking-widest">{user.tier}</div>
+                    users.map((user: any, index: number) => {
+                        let rowStyle = {
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '16px 20px',
+                            background: 'rgba(255, 255, 255, 0.4)',
+                            border: '1px solid var(--border-subtle)',
+                            borderRadius: 'var(--radius-md)',
+                            transition: 'all 0.2s ease',
+                        };
+                        let rankColor = 'var(--text-muted)';
+
+                        if (index === 0) {
+                            rowStyle.background = 'rgba(212, 175, 55, 0.15)'; // Gold
+                            rowStyle.border = '1px solid rgba(212, 175, 55, 0.4)';
+                            rankColor = '#d4af37';
+                        } else if (index === 1) {
+                            rowStyle.background = 'rgba(192, 192, 192, 0.15)'; // Silver
+                            rowStyle.border = '1px solid rgba(192, 192, 192, 0.4)';
+                            rankColor = '#9a9a9a';
+                        } else if (index === 2) {
+                            rowStyle.background = 'rgba(205, 127, 50, 0.15)'; // Bronze
+                            rowStyle.border = '1px solid rgba(205, 127, 50, 0.4)';
+                            rankColor = '#cd7f32';
+                        }
+
+                        return (
+                            <div key={index} style={rowStyle}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                                    <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 900, fontSize: '1rem', width: '28px', color: rankColor }}>
+                                        #{user.rank}
+                                    </span>
+                                    <div>
+                                        <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '2px' }}>
+                                            {user.username}
+                                        </div>
+                                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                                            <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-violet)', marginRight: '6px' }}></span>
+                                            {user.tier}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '1.05rem', color: 'var(--accent-cyan)' }}>
+                                    {user.xp.toLocaleString('en-US')} XP
                                 </div>
                             </div>
-                            <div className="font-mono font-bold text-[#00ffa3] text-sm">
-                                {user.xp.toLocaleString('en-US')} XP
-                            </div>
-                        </div>
-                    )))}
+                        );
+                    })
+                )}
             </div>
 
-            <button className="w-full mt-6 py-3 text-[10px] font-black text-gray-500 uppercase tracking-widest hover:text-white transition-colors">
-                View Full Leaderboard
-            </button>
         </div>
     );
 }

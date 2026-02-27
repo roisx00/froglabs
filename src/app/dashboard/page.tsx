@@ -203,11 +203,6 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                     </div>
                 </div>
 
-                {/* Engagement Features */}
-                <div className="mb-8 mt-8">
-                    <XPLeaderboard />
-                </div>
-
                 {/* XP Progress */}
                 <div className="xp-container">
                     <div className="xp-section-title">XP Progress</div>
@@ -312,6 +307,11 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                     <div className="wl-note">
                         <strong>Note:</strong> All paths contribute independently. XP thresholds grant automatic role upgrades. Manual approval covers final GTD Mint allocation.
                     </div>
+                </div>
+
+                {/* Leaderboard Section - Bottom */}
+                <div style={{ marginTop: '48px', marginBottom: '40px' }}>
+                    <XPLeaderboard />
                 </div>
 
                 <footer>
