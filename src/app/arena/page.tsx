@@ -227,7 +227,7 @@ export default function ArenaPage() {
                                 INITIATE TRAINING SEQUENCE
                             </button>
                         )}
-                        <p className="training-desc">Training significantly increases your Neural Combat Score. Requires 1 hour to cool down.</p>
+                        <p className="training-desc">Training significantly increases your Neural Combat Score. Requires 30 minutes to cool down.</p>
                     </div>
                 </div>
 
@@ -653,23 +653,92 @@ export default function ArenaPage() {
                     animation: scanline 0.2s ease-out;
                 }
                 .log-prefix { opacity: 0.5; }
+                .log-text {
+                    color: rgba(255, 255, 255, 0.8);
+                }
+                .log-cursor {
+                    display: inline-block;
+                    width: 8px;
+                    height: 14px;
+                    background: #00FFCC;
+                    animation: blink 1s step-end infinite;
+                    margin-left: 5px;
+                }
                 .btn-reset {
-                    margin-top: 30px;
-                    background: transparent;
-                    border: 1px solid var(--accent-cyan);
-                    color: var(--accent-cyan);
-                    padding: 12px 24px;
+                    margin-top: 20px;
+                    background: rgba(0, 255, 204, 0.1);
+                    color: #00FFCC;
+                    border: 1px solid rgba(0, 255, 204, 0.3);
+                    padding: 10px 20px;
                     font-family: var(--font-mono);
                     font-size: 0.8rem;
-                    cursor: pointer;
                     border-radius: 4px;
-                    transition: all 0.2s;
+                    cursor: pointer;
+                    width: 100%;
                 }
                 .btn-reset:hover {
-                    background: rgba(0, 255, 204, 0.1);
+                    background: rgba(0, 255, 204, 0.2);
                 }
+                    
                 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
                 @keyframes scanline { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+                /* --- Mobile Responsiveness --- */
+                @media (max-width: 768px) {
+                    .arena-layout {
+                        padding: 15px;
+                        height: auto;
+                        min-height: 100vh;
+                        overflow-y: auto;
+                    }
+                    .arena-nav {
+                        flex-direction: column;
+                        gap: 15px;
+                        margin-bottom: 20px;
+                        text-align: center;
+                        height: auto;
+                    }
+                    .back-btn {
+                        font-size: 0.75rem;
+                        align-self: flex-start;
+                    }
+                    .arena-brand {
+                        font-size: 1.2rem;
+                        white-space: normal;
+                        line-height: 1.4;
+                    }
+                    .arena-grid {
+                        grid-template-columns: 1fr;
+                        height: auto;
+                        gap: 20px;
+                    }
+                    .panel {
+                        height: auto;
+                        min-height: 500px;
+                    }
+                    .agent-display {
+                        flex-direction: column;
+                        text-align: center;
+                        gap: 15px;
+                    }
+                    .online-roster {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 10px;
+                    }
+                    .roster-label {
+                        font-size: 0.8rem;
+                    }
+                    .global-log-entry {
+                        flex-wrap: wrap;
+                        line-height: 1.4;
+                    }
+                    .global-time {
+                        width: 100%;
+                        display: block;
+                        margin-bottom: 4px;
+                    }
+                }
             `}</style>
         </div>
     );

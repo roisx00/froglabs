@@ -3,7 +3,7 @@ import { authOptions } from "../../auth/[...nextauth]/route";
 import { NextResponse } from "next/server";
 import { db } from "../../../../lib/firebase";
 
-const TRAINING_COOLDOWN_MS = 60 * 60 * 1000; // 1 Hour
+const TRAINING_COOLDOWN_MS = 30 * 60 * 1000; // 30 Minutes
 
 export async function POST() {
     try {
