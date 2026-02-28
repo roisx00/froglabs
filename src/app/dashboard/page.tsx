@@ -251,8 +251,8 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                 </div>
                 <style jsx>{`
                     .arena-entry-btn {
-                        background: linear-gradient(135deg, rgba(0, 255, 204, 0.05) 0%, rgba(10, 10, 10, 1) 100%);
-                        border: 1px solid var(--accent-cyan);
+                        background: linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(20, 20, 20, 1) 100%);
+                        border: 1px solid rgba(0, 255, 204, 0.3);
                         border-radius: var(--radius-md);
                         padding: 24px 32px;
                         display: flex;
@@ -262,6 +262,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                         transition: all 0.3s ease;
                         position: relative;
                         overflow: hidden;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
                     }
                     .arena-entry-btn::before {
                         content: '';
@@ -273,7 +274,8 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                         transition: 0.5s;
                     }
                     .arena-entry-btn:hover {
-                        box-shadow: 0 0 20px rgba(0, 255, 204, 0.15);
+                        box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+                        border-color: rgba(0, 255, 204, 0.8);
                         transform: translateY(-2px);
                     }
                     .arena-entry-btn:hover::before {
@@ -281,25 +283,28 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                     }
                     .arena-entry-content h2 {
                         font-family: var(--font-mono);
-                        font-size: 1.2rem;
+                        font-size: 1.3rem;
                         font-weight: 900;
-                        color: var(--accent-cyan);
-                        margin: 0 0 4px 0;
+                        color: #00FFCC;
+                        margin: 0 0 6px 0;
                         letter-spacing: 2px;
+                        text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
                     }
                     .arena-entry-content p {
                         font-family: var(--font-mono);
-                        font-size: 0.7rem;
-                        color: var(--text-muted);
+                        font-size: 0.75rem;
+                        color: rgba(255, 255, 255, 0.7);
                         margin: 0;
-                        letter-spacing: 1px;
+                        letter-spacing: 1.5px;
+                        text-transform: uppercase;
                     }
                     .arena-entry-arrow {
                         font-family: var(--font-mono);
-                        font-size: 1.5rem;
-                        color: var(--accent-cyan);
+                        font-size: 1.8rem;
+                        color: #00FFCC;
                         font-weight: bold;
                         transition: transform 0.3s ease;
+                        text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
                     }
                     .arena-entry-btn:hover .arena-entry-arrow {
                         transform: translateX(10px);
