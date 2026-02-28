@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
 
@@ -36,6 +36,13 @@ export default function ArenaPage() {
     const [battleStatus, setBattleStatus] = useState<'idle' | 'loading' | 'queued' | 'battling' | 'finished'>('idle');
     const [currentBattle, setCurrentBattle] = useState<any>(null);
     const [battleLogs, setBattleLogs] = useState<string[]>([]);
+
+    const logsEndRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        // Auto-scroll the terminal down as new logs are added
+        logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [battleLogs]);
 
     const trainingLevel = appData?.trainingLevel || 0;
     const processingPower = appData?.processingPower || 0;
@@ -143,7 +150,7 @@ export default function ArenaPage() {
                 mutateArena();
                 mutateApp();
             }
-        }, 1500);
+        }, 2000); // 2000ms per line guarantees ~3 minute battle for ~90 lines
     };
 
     if (!userData && !appData) {
@@ -285,6 +292,7 @@ export default function ArenaPage() {
                                         </div>
                                     ))}
                                     {battleStatus === 'battling' && <div className="log-cursor">_</div>}
+                                    <div ref={logsEndRef} />
                                 </div>
 
                                 {battleStatus === 'finished' && (
