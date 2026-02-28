@@ -69,35 +69,47 @@ export async function POST() {
             const opponentData = opponentDoc.data();
             const opponentId = opponentDoc.id;
 
-            // Battle Logic (Passive)
-            // Stats from AILab: Processing, Resilience, Stealth (Default to 10 if missing)
+            // Battle Logic (Active Training > CP > XP Luck)
             const p1 = {
                 id: userId,
                 name: username,
                 processing: userData.processingPower || 10,
                 resilience: userData.resilience || 10,
-                stealth: userData.stealth || 10
+                stealth: userData.stealth || 10,
+                trainingLevel: userData.trainingLevel || 0,
+                xp: userData.socialXP || 0
             };
             const p2 = {
                 id: opponentId,
                 name: opponentData.username || "UNKNOWN_AGENT",
                 processing: opponentData.processingPower || 10,
                 resilience: opponentData.resilience || 10,
-                stealth: opponentData.stealth || 10
+                stealth: opponentData.stealth || 10,
+                trainingLevel: opponentData.trainingLevel || 0,
+                xp: opponentData.socialXP || 0
             };
 
-            // Calculate Weight-Adjusted Score
-            const p1Score = (p1.processing * 1.2) + (p1.stealth * 1.0) + (p1.resilience * 0.8) + (Math.random() * 5);
-            const p2Score = (p2.processing * 1.2) + (p2.stealth * 1.0) + (p2.resilience * 0.8) + (Math.random() * 5);
+            // Calculate Base Combat Power (CP)
+            const p1CP = (p1.processing * 1.2) + (p1.stealth * 1.0) + (p1.resilience * 0.8);
+            const p2CP = (p2.processing * 1.2) + (p2.stealth * 1.0) + (p2.resilience * 0.8);
 
-            const winner = p1Score > p2Score ? p1 : p2;
-            const loser = p1Score > p2Score ? p2 : p1;
+            // Luck Modifier (Surge) based on total XP
+            // Provides a random boost: baseline 0-5, plus up to 1 point per 500 XP
+            const p1Surge = (Math.random() * 5) + (Math.random() * (p1.xp / 500));
+            const p2Surge = (Math.random() * 5) + (Math.random() * (p2.xp / 500));
+
+            // Final Score Calculation: Training is paramount (x100 multiplier)
+            const p1Score = (p1.trainingLevel * 100) + p1CP + p1Surge;
+            const p2Score = (p2.trainingLevel * 100) + p2CP + p2Surge;
+
+            const winner = p1Score >= p2Score ? p1 : p2;
+            const loser = p1Score >= p2Score ? p2 : p1;
 
             const battleLog = [
                 `${winner.name} engaged ${loser.name} in the Neural Arena.`,
-                `${winner.name}'s Neural Core frequency peaked at ${Math.floor(Math.max(p1Score, p2Score))}Hz.`,
-                `Target ${loser.name} resilience compromised.`,
-                `Victory granted to ${winner.name}.`
+                `Training Levels: ${winner.name} [Lv.${winner.trainingLevel}] vs ${loser.name} [Lv.${loser.trainingLevel}]`,
+                `${winner.name}'s Neural Core peaked with a Combat Score of ${Math.floor(Math.max(p1Score, p2Score))}.`,
+                `Target ${loser.name} resilience compromised. Victory granted to ${winner.name}.`
             ];
 
             const newBattle = {

@@ -6,8 +6,8 @@ import { signOut } from 'next-auth/react';
 import ConsigliereAgent from '@/components/ConsigliereAgent';
 import XPLeaderboard from '@/components/XPLeaderboard';
 import MysteryBoxModal from '@/components/MysteryBoxModal';
+import Link from 'next/link';
 import AchievementMedals from '@/components/AchievementMedals';
-import NeuralArena from '@/components/NeuralArena';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -237,9 +237,74 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                 {/* Achievement Medals */}
                 <AchievementMedals missionCount={app?.missionCount || 0} />
 
-                {/* Neural Arena */}
-                <NeuralArena />
-
+                {/* Neural Arena Link */}
+                <div style={{ marginTop: '30px', marginBottom: '20px' }}>
+                    <Link href="/arena" style={{ textDecoration: 'none' }}>
+                        <div className="arena-entry-btn">
+                            <div className="arena-entry-content">
+                                <h2>NEURAL ARENA // PROTOCOL 02</h2>
+                                <p>TRAIN YOUR AGENT. ENTER THE BATTLE QUEUE.</p>
+                            </div>
+                            <div className="arena-entry-arrow">→</div>
+                        </div>
+                    </Link>
+                </div>
+                <style jsx>{`
+                    .arena-entry-btn {
+                        background: linear-gradient(135deg, rgba(0, 255, 204, 0.05) 0%, rgba(10, 10, 10, 1) 100%);
+                        border: 1px solid var(--accent-cyan);
+                        border-radius: var(--radius-md);
+                        padding: 24px 32px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        position: relative;
+                        overflow: hidden;
+                    }
+                    .arena-entry-btn::before {
+                        content: '';
+                        position: absolute;
+                        top: 0; left: -100%;
+                        width: 50%; height: 100%;
+                        background: linear-gradient(90deg, transparent, rgba(0, 255, 204, 0.1), transparent);
+                        transform: skewX(-20deg);
+                        transition: 0.5s;
+                    }
+                    .arena-entry-btn:hover {
+                        box-shadow: 0 0 20px rgba(0, 255, 204, 0.15);
+                        transform: translateY(-2px);
+                    }
+                    .arena-entry-btn:hover::before {
+                        left: 150%;
+                    }
+                    .arena-entry-content h2 {
+                        font-family: var(--font-mono);
+                        font-size: 1.2rem;
+                        font-weight: 900;
+                        color: var(--accent-cyan);
+                        margin: 0 0 4px 0;
+                        letter-spacing: 2px;
+                    }
+                    .arena-entry-content p {
+                        font-family: var(--font-mono);
+                        font-size: 0.7rem;
+                        color: var(--text-muted);
+                        margin: 0;
+                        letter-spacing: 1px;
+                    }
+                    .arena-entry-arrow {
+                        font-family: var(--font-mono);
+                        font-size: 1.5rem;
+                        color: var(--accent-cyan);
+                        font-weight: bold;
+                        transition: transform 0.3s ease;
+                    }
+                    .arena-entry-btn:hover .arena-entry-arrow {
+                        transform: translateX(10px);
+                    }
+                `}</style>
                 {/* Dashboard Missions */}
                 {dashboardMissions.length > 0 && (
                     <div className="mission-card">
