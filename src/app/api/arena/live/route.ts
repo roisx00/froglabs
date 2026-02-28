@@ -47,8 +47,8 @@ export async function GET() {
             globalBattles
         });
 
-    } catch (err) {
-        console.error("Error fetching live arena data:", err);
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    } catch (err: any) {
+        console.error("Error fetching live arena data:", err?.message || err);
+        return NextResponse.json({ error: "Internal Server Error", details: err?.message }, { status: 500 });
     }
 }
