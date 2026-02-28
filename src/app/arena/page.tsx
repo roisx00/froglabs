@@ -10,8 +10,8 @@ export default function ArenaPage() {
     // --- Data Fetching ---
     const { data: arenaGlobalData, mutate: mutateArena } = useSWR('/api/arena', fetcher, { refreshInterval: 60000 });
     const { data: liveData } = useSWR('/api/arena/live', fetcher, { refreshInterval: 3000 }); // Fast refresh for global feed
-    const { data: userData, mutate: mutateUser } = useSWR('/api/user', fetcher);
-    const { data: appData, mutate: mutateApp } = useSWR('/api/application', fetcher);
+    const { data: userData, mutate: mutateUser } = useSWR('/api/user', fetcher, { refreshInterval: 5000 }); // Fast refresh for XP
+    const { data: appData, mutate: mutateApp } = useSWR('/api/application', fetcher, { refreshInterval: 5000 });
 
     // --- Real-Time Presence (Heartbeat) ---
     useEffect(() => {
