@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "../../../../lib/firebase";
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0; // Disable aggressive caching for live endpoint
 
 export async function GET() {
