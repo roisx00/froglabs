@@ -41,6 +41,12 @@ export default function ArenaPage() {
 
     // --- Neural Upgrades State ---
     const [isBuying, setIsBuying] = useState<string | null>(null);
+    const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+    const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification(null), 3500);
+    };
 
     const POWERS_CATALOG = [
         { id: 'p_overclock', name: 'Synaptic Overclock', cost: 500, desc: '+2 Processing', tier: 1 },
@@ -67,12 +73,12 @@ export default function ArenaPage() {
 
             if (result.success) {
                 mutateApp(); // Refresh stats and XP
-                alert('Neural Upgrade successfully installed.');
+                showNotification('NEURAL UPGRADE SUCCESSFULLY INSTALLED', 'success');
             } else {
-                alert(result.error || result.reason || 'Transaction failed.');
+                showNotification(result.error || result.reason || 'TRANSACTION FAILED.', 'error');
             }
         } catch (err) {
-            alert('System connection error.');
+            showNotification('SYSTEM CONNECTION ERROR.', 'error');
         } finally {
             setIsBuying(null);
         }
@@ -374,6 +380,25 @@ export default function ArenaPage() {
                     })}
                 </div>
             </div>
+
+            {/* Premium In-App Notification */}
+            {notification && (
+                <div className={`notification-overlay ${notification.type}`}>
+                    <div className="notification-box">
+                        <div className="notification-icon">
+                            {notification.type === 'success' ? '✓' : '⚠'}
+                        </div>
+                        <div className="notification-content">
+                            <div className="notification-title">
+                                {notification.type === 'success' ? 'SYSTEM ALERT' : 'SYSTEM ERROR'}
+                            </div>
+                            <div className="notification-message">
+                                {notification.message}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <style jsx>{`
                 .arena-layout {
@@ -869,6 +894,65 @@ export default function ArenaPage() {
                     
                 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
                 @keyframes scanline { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+                /* --- Premium Notifications --- */
+                .notification-overlay {
+                    position: fixed;
+                    top: 0; left: 0; right: 0; bottom: 0;
+                    background: rgba(0, 0, 0, 0.7);
+                    backdrop-filter: blur(8px);
+                    z-index: 10000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    animation: fadeIn 0.3s ease-out forwards;
+                }
+                .notification-box {
+                    background: rgba(10, 10, 10, 0.95);
+                    border: 1px solid rgba(0, 255, 204, 0.5);
+                    border-radius: 12px;
+                    padding: 30px;
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                    max-width: 400px;
+                    box-shadow: 0 0 50px rgba(0, 255, 204, 0.1), inset 0 0 20px rgba(0, 255, 204, 0.05);
+                    transform: translateY(20px);
+                    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                }
+                .notification-overlay.error .notification-box {
+                    border-color: rgba(255, 62, 62, 0.5);
+                    box-shadow: 0 0 50px rgba(255, 62, 62, 0.1), inset 0 0 20px rgba(255, 62, 62, 0.05);
+                }
+                .notification-icon {
+                    font-size: 2rem;
+                    color: var(--accent-cyan);
+                    text-shadow: 0 0 15px var(--accent-cyan);
+                    animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
+                }
+                .notification-overlay.error .notification-icon {
+                    color: #FF3E3E;
+                    text-shadow: 0 0 15px #FF3E3E;
+                }
+                .notification-content {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+                .notification-title {
+                    font-family: var(--font-mono);
+                    font-size: 0.9rem;
+                    color: rgba(255, 255, 255, 0.6);
+                    letter-spacing: 2px;
+                }
+                .notification-message {
+                    font-size: 1.1rem;
+                    font-weight: 800;
+                    color: #fff;
+                }
+                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                @keyframes slideUp { from { opacity: 0; transform: translateY(30px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+                @keyframes pop { 0% { transform: scale(0); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
 
                 /* --- Mobile Responsiveness --- */
                 @media (max-width: 768px) {
