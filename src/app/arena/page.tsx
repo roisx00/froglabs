@@ -39,6 +39,45 @@ export default function ArenaPage() {
 
     const logsEndRef = useRef<HTMLDivElement>(null);
 
+    // --- Neural Upgrades State ---
+    const [isBuying, setIsBuying] = useState<string | null>(null);
+
+    const POWERS_CATALOG = [
+        { id: 'p_overclock', name: 'Synaptic Overclock', cost: 500, desc: '+2 Processing', tier: 1 },
+        { id: 'p_ghost', name: 'Ghost Protocol', cost: 500, desc: '+2 Stealth', tier: 1 },
+        { id: 'p_kinetic', name: 'Kinetic Barrier', cost: 500, desc: '+2 Resilience', tier: 1 },
+        { id: 'p_quantum', name: 'Quantum Processor', cost: 1500, desc: '+5 Processing', tier: 2 },
+        { id: 'p_void', name: 'Void Cloak', cost: 1500, desc: '+5 Stealth', tier: 2 },
+        { id: 'p_aegis', name: 'Aegis Shield', cost: 1500, desc: '+5 Resilience', tier: 2 },
+        { id: 'p_core', name: 'AI Core Upgrade', cost: 4000, desc: '+10 Processing', tier: 3 },
+        { id: 'p_phantom', name: 'Phantom Drive', cost: 4000, desc: '+10 Stealth', tier: 3 },
+        { id: 'p_nano', name: 'Nano-Armor', cost: 4000, desc: '+10 Resilience', tier: 3 },
+        { id: 'p_ascendancy', name: 'Neural Ascendancy', cost: 10000, desc: '+5 All Stats', tier: 4 },
+    ];
+
+    const handleBuyPower = async (powerId: string) => {
+        setIsBuying(powerId);
+        try {
+            const res = await fetch('/api/arena/upgrade', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ powerId })
+            });
+            const result = await res.json();
+
+            if (result.success) {
+                mutateApp(); // Refresh stats and XP
+                alert('Neural Upgrade successfully installed.');
+            } else {
+                alert(result.error || result.reason || 'Transaction failed.');
+            }
+        } catch (err) {
+            alert('System connection error.');
+        } finally {
+            setIsBuying(null);
+        }
+    };
+
     useEffect(() => {
         // Auto-scroll the terminal down as new logs are added
         logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -306,6 +345,36 @@ export default function ArenaPage() {
                 </div>
             </div>
 
+            {/* BOTTOM: Neural Upgrades Market */}
+            <div className="market-section">
+                <div className="market-header">
+                    <h2>BLACK MARKET // NEURAL UPGRADES</h2>
+                    <div className="market-xp">AVAILABLE XP: <span className="highlight-text">{userData?.socialXP || 0}</span></div>
+                </div>
+                <div className="market-grid">
+                    {POWERS_CATALOG.map((power) => {
+                        const canAfford = (userData?.socialXP || 0) >= power.cost;
+                        return (
+                            <div key={power.id} className={`power-card tier-${power.tier} ${canAfford ? 'purchasable' : 'locked'}`}>
+                                <div className="power-tier">TIER 0{power.tier}</div>
+                                <div className="power-name">{power.name}</div>
+                                <div className="power-desc">{power.desc}</div>
+                                <div className="power-action">
+                                    <div className="power-cost">{power.cost} XP</div>
+                                    <button
+                                        className="btn-buy"
+                                        disabled={!canAfford || isBuying === power.id}
+                                        onClick={() => handleBuyPower(power.id)}
+                                    >
+                                        {isBuying === power.id ? 'INSTALLING...' : 'INSTALL'}
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
             <style jsx>{`
                 .arena-layout {
                     min-height: 100vh;
@@ -359,7 +428,7 @@ export default function ArenaPage() {
                 .arena-grid {
                     display: grid;
                     grid-template-columns: 1fr 1.5fr;
-                    gap: 30px;
+                    gap: 40px;
                     padding: 40px;
                     max-width: 1600px;
                     margin: 0 auto;
@@ -370,13 +439,13 @@ export default function ArenaPage() {
 
                 /* Panels */
                 .panel {
-                    background: rgba(10, 10, 10, 0.9);
-                    border: 1px solid rgba(0, 255, 204, 0.15);
-                    border-radius: 8px;
-                    padding: 30px;
+                    background: rgba(10, 10, 10, 0.95);
+                    border: 1px solid rgba(0, 255, 204, 0.3);
+                    border-radius: 12px;
+                    padding: 40px;
                     display: flex;
                     flex-direction: column;
-                    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+                    box-shadow: 0 0 50px rgba(0, 255, 204, 0.05), inset 0 0 20px rgba(0, 255, 204, 0.02);
                     position: relative;
                     overflow: hidden;
                 }
@@ -678,6 +747,124 @@ export default function ArenaPage() {
                 }
                 .btn-reset:hover {
                     background: rgba(0, 255, 204, 0.2);
+                }
+                    
+                /* --- Neural Upgrades Market --- */
+                .market-section {
+                    margin: 0 auto 60px;
+                    max-width: 1600px;
+                    padding: 0 40px;
+                }
+                .market-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-end;
+                    border-bottom: 1px solid rgba(255, 62, 62, 0.3);
+                    padding-bottom: 15px;
+                    margin-bottom: 30px;
+                }
+                .market-header h2 {
+                    margin: 0;
+                    font-family: var(--font-mono);
+                    font-size: 1.5rem;
+                    color: #FF3E3E;
+                    letter-spacing: 3px;
+                    text-shadow: 0 0 10px rgba(255, 62, 62, 0.4);
+                }
+                .market-xp {
+                    font-family: var(--font-mono);
+                    font-size: 1.1rem;
+                }
+                .market-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                    gap: 25px;
+                }
+                .power-card {
+                    background: rgba(10, 10, 10, 0.8);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 8px;
+                    padding: 25px;
+                    display: flex;
+                    flex-direction: column;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    position: relative;
+                    overflow: hidden;
+                }
+                .power-card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0; left: 0; right: 0; height: 3px;
+                    background: transparent;
+                    transition: all 0.3s;
+                }
+                .power-card.purchasable:hover {
+                    border-color: rgba(0, 255, 204, 0.5);
+                    box-shadow: 0 10px 30px rgba(0, 255, 204, 0.1);
+                    transform: translateY(-5px);
+                }
+                .power-card.purchasable:hover::before {
+                    background: var(--accent-cyan);
+                    box-shadow: 0 0 15px var(--accent-cyan);
+                }
+                .power-card.locked {
+                    opacity: 0.6;
+                    border-color: rgba(255, 62, 62, 0.2);
+                }
+                .power-tier {
+                    font-family: var(--font-mono);
+                    font-size: 0.7rem;
+                    color: rgba(255, 255, 255, 0.4);
+                    margin-bottom: 10px;
+                    letter-spacing: 1px;
+                }
+                .power-name {
+                    font-size: 1.2rem;
+                    font-weight: 800;
+                    margin-bottom: 8px;
+                    color: #fff;
+                }
+                .power-card.purchasable .power-name { color: #00FFCC; }
+                .power-desc {
+                    font-family: var(--font-mono);
+                    font-size: 0.85rem;
+                    color: rgba(255, 255, 255, 0.7);
+                    margin-bottom: 25px;
+                    flex-grow: 1;
+                }
+                .power-action {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+                    padding-top: 15px;
+                }
+                .power-cost {
+                    font-family: var(--font-mono);
+                    font-size: 0.9rem;
+                    font-weight: bold;
+                    color: #FF3E3E;
+                }
+                .power-card.purchasable .power-cost { color: #fff; }
+                .btn-buy {
+                    background: transparent;
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    color: rgba(255, 255, 255, 0.5);
+                    padding: 8px 16px;
+                    font-family: var(--font-mono);
+                    font-size: 0.8rem;
+                    border-radius: 4px;
+                    cursor: not-allowed;
+                    transition: all 0.2s;
+                }
+                .power-card.purchasable .btn-buy {
+                    border-color: #00FFCC;
+                    color: #00FFCC;
+                    cursor: pointer;
+                }
+                .power-card.purchasable .btn-buy:hover {
+                    background: rgba(0, 255, 204, 0.1);
+                    box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
                 }
                     
                 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
