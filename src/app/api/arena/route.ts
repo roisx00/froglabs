@@ -52,40 +52,90 @@ export async function POST() {
                 totalBattles: 0
             };
 
-            // Simulate battle logic
-            const opponentId = "opponent_456"; // Placeholder for a real opponent selection
-            const opponentName = "TARGET_SYSTEM_X"; // Placeholder
+            // Find an opponent in the queue
+            const queueSnap = await db.collection('applications')
+                .where('inArenaQueue', '==', true)
+                .limit(1)
+                .get();
 
-            const winnerId = userId;
-            const winnerName = username;
-            const loserId = opponentId;
-            const loserName = opponentName;
+            if (queueSnap.empty) {
+                // No opponent, join queue
+                transaction.update(userRef, { inArenaQueue: true, arenaJoinedAt: Date.now() });
+                return { success: true, status: 'queued' };
+            }
+
+            // Opponent found!
+            const opponentDoc = queueSnap.docs[0];
+            const opponentData = opponentDoc.data();
+            const opponentId = opponentDoc.id;
+
+            // Battle Logic (Passive)
+            // Stats from AILab: Processing, Resilience, Stealth (Default to 10 if missing)
+            const p1 = {
+                id: userId,
+                name: username,
+                processing: userData.processingPower || 10,
+                resilience: userData.resilience || 10,
+                stealth: userData.stealth || 10
+            };
+            const p2 = {
+                id: opponentId,
+                name: opponentData.username || "UNKNOWN_AGENT",
+                processing: opponentData.processingPower || 10,
+                resilience: opponentData.resilience || 10,
+                stealth: opponentData.stealth || 10
+            };
+
+            // Calculate Weight-Adjusted Score
+            const p1Score = (p1.processing * 1.2) + (p1.stealth * 1.0) + (p1.resilience * 0.8) + (Math.random() * 5);
+            const p2Score = (p2.processing * 1.2) + (p2.stealth * 1.0) + (p2.resilience * 0.8) + (Math.random() * 5);
+
+            const winner = p1Score > p2Score ? p1 : p2;
+            const loser = p1Score > p2Score ? p2 : p1;
 
             const battleLog = [
-                `${username} engaged TARGET_SYSTEM_X in the Neural Arena.`,
-                `${username}'s Neural Core frequency peaked at 88Hz.`,
-                `TARGET_SYSTEM_X resilience compromised.`,
-                `Victory granted to ${username}.`
+                `${winner.name} engaged ${loser.name} in the Neural Arena.`,
+                `${winner.name}'s Neural Core frequency peaked at ${Math.floor(Math.max(p1Score, p2Score))}Hz.`,
+                `Target ${loser.name} resilience compromised.`,
+                `Victory granted to ${winner.name}.`
             ];
 
             const newBattle = {
                 id: `battle_${Date.now()}`,
-                winnerId,
-                winnerName,
-                loserId,
-                loserName,
+                winnerId: winner.id,
+                winnerName: winner.name,
+                loserId: loser.id,
+                loserName: loser.name,
                 timestamp: Date.now(),
                 log: battleLog
             };
 
-            // Update user's battle count
-            const newBattleCount = (userData.battleCount || 0) + 1;
-            transaction.update(userRef, { battleCount: newBattleCount });
+            // Update winner
+            transaction.update(db.collection('applications').doc(winner.id), {
+                battleCount: (winner.id === userId ? (userData.battleCount || 0) : (opponentData.battleCount || 0)) + 1,
+                socialXP: (winner.id === userId ? (userData.socialXP || 0) : (opponentData.socialXP || 0)) + 100,
+                inArenaQueue: false
+            });
+
+            // If loser isn't the current user (edge case prevention), update them too
+            if (loser.id !== userId) {
+                transaction.update(db.collection('applications').doc(loser.id), {
+                    battleCount: (opponentData.battleCount || 0) + 1,
+                    socialXP: (opponentData.socialXP || 0) + 10,
+                    inArenaQueue: false
+                });
+            } else {
+                transaction.update(userRef, {
+                    battleCount: (userData.battleCount || 0) + 1,
+                    socialXP: (userData.socialXP || 0) + 10,
+                    inArenaQueue: false
+                });
+            }
 
             // Update arena stats
             const newTotalBattles = currentStats.totalBattles + 1;
             transaction.set(statsRef, {
-                activeParticipants: currentStats.activeParticipants + (currentStats.totalBattles === 0 ? 1 : 0), // Simple logic for active participants
+                activeParticipants: currentStats.activeParticipants, // Keep active
                 totalBattles: newTotalBattles
             }, { merge: true });
 
