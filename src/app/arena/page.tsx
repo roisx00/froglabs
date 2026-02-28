@@ -349,11 +349,11 @@ export default function ArenaPage() {
             <div className="market-section">
                 <div className="market-header">
                     <h2>BLACK MARKET // NEURAL UPGRADES</h2>
-                    <div className="market-xp">AVAILABLE XP: <span className="highlight-text">{userData?.socialXP || 0}</span></div>
+                    <div className="market-xp">AVAILABLE XP: <span className="highlight-text">{appData?.socialXP || 0}</span></div>
                 </div>
                 <div className="market-grid">
                     {POWERS_CATALOG.map((power) => {
-                        const canAfford = (userData?.socialXP || 0) >= power.cost;
+                        const canAfford = (appData?.socialXP || 0) >= power.cost;
                         return (
                             <div key={power.id} className={`power-card tier-${power.tier} ${canAfford ? 'purchasable' : 'locked'}`}>
                                 <div className="power-tier">TIER 0{power.tier}</div>
