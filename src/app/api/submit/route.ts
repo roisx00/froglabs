@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
             chatXP: 0,
             socialXP: 50,
             completedMissions: regMissions,
+            missionCount: regMissions.length,
             submittedAt: new Date().toISOString(),
             currentLevelRole: ROLES.TADPOLE,
             // Bot will pick this up within 30 seconds and assign the Tadpole role

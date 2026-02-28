@@ -29,7 +29,8 @@ export async function POST(req: NextRequest) {
         // Reward XP and add to completed list
         await userRef.update({
             socialXP: (data.socialXP || 0) + (xpReward || 50),
-            completedMissions: [...completedMissions, missionId]
+            completedMissions: [...completedMissions, missionId],
+            missionCount: (data.missionCount || 0) + 1
         });
 
         // Check for role promotions

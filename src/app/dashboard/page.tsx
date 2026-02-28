@@ -6,6 +6,8 @@ import { signOut } from 'next-auth/react';
 import ConsigliereAgent from '@/components/ConsigliereAgent';
 import XPLeaderboard from '@/components/XPLeaderboard';
 import MysteryBoxModal from '@/components/MysteryBoxModal';
+import AchievementMedals from '@/components/AchievementMedals';
+import NeuralArena from '@/components/NeuralArena';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -171,7 +173,7 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
             <div className="container">
                 <div style={{ marginBottom: '28px' }}>
                     <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '4px' }}>
-                        {user.username}
+                        {user?.username || 'GUEST_AGENT'}
                     </h1>
                     <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--text-muted)', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
                         Discord Member — RibbitLabs Whitelist Program
@@ -231,6 +233,12 @@ export default function Dashboard({ initialUser, initialApp, initialMissions }: 
                         </div>
                     </div>
                 </div>
+
+                {/* Achievement Medals */}
+                <AchievementMedals missionCount={app?.missionCount || 0} />
+
+                {/* Neural Arena */}
+                <NeuralArena />
 
                 {/* Dashboard Missions */}
                 {dashboardMissions.length > 0 && (
