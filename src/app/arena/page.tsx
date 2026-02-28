@@ -8,10 +8,25 @@ const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export default function ArenaPage() {
     // --- Data Fetching ---
-    const { data: arenaData, mutate: mutateArena } = useSWR('/api/arena', fetcher, { refreshInterval: 5000 });
+    const { data: arenaGlobalData, mutate: mutateArena } = useSWR('/api/arena', fetcher, { refreshInterval: 60000 });
+    const { data: liveData } = useSWR('/api/arena/live', fetcher, { refreshInterval: 3000 }); // Fast refresh for global feed
     const { data: userData, mutate: mutateUser } = useSWR('/api/user', fetcher);
     const { data: appData, mutate: mutateApp } = useSWR('/api/application', fetcher);
 
+    // --- Real-Time Presence (Heartbeat) ---
+    useEffect(() => {
+        if (!userData) return;
+
+        // Ping immediately on mount
+        fetch('/api/arena/ping', { method: 'POST' }).catch(() => { });
+
+        // Ping every 15 seconds
+        const heartbeat = setInterval(() => {
+            fetch('/api/arena/ping', { method: 'POST' }).catch(() => { });
+        }, 15000);
+
+        return () => clearInterval(heartbeat);
+    }, [userData]);
     // --- Training State ---
     const [isTraining, setIsTraining] = useState(false);
     const [cooldownRemaining, setCooldownRemaining] = useState<number | null>(null);
@@ -209,27 +224,54 @@ export default function ArenaPage() {
                     </div>
                 </div>
 
-                {/* RIGHT: Battle Terminal */}
+                {/* RIGHT: Battle Terminal & Live Feed */}
                 <div className="panel battle-panel">
                     <div className="panel-header">
-                        <h3>LIVE MATCHMAKING TERMINAL</h3>
+                        <h3>GLOBAL BATTLE FEED</h3>
                         <div className="arena-stats">
-                            <span>ACTIVE AGENTS: {arenaData?.activeParticipants || 0}</span>
-                            <span>TOTAL CLASHES: {arenaData?.totalBattles || 0}</span>
+                            <span>ONLINE AGENTS: {liveData?.onlineAgents?.length || 0}</span>
+                            <span>TOTAL CLASHES: {arenaGlobalData?.totalBattles || 0}</span>
+                        </div>
+                    </div>
+
+                    {/* Live Agents Marquee */}
+                    <div className="online-roster">
+                        <div className="roster-label">ACTIVE IN BAYOU:</div>
+                        <div className="roster-scroll">
+                            <div className="roster-track">
+                                {liveData?.onlineAgents?.map((agent: any) => (
+                                    <span key={agent.id} className="online-agent">[{agent.name} Lv.{agent.level}]</span>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
                     <div className="battle-viewport">
                         {battleStatus === 'idle' && (
-                            <div className="idle-state">
+                            <div className="global-feed-container">
                                 <div className="warning-box">
-                                    <h4 className="warning-title">! WARNING !</h4>
+                                    <h4 className="warning-title">! LIVE FEED ACTIVE !</h4>
                                     <p>MATCHMAKING WILL POUND YOUR NEURAL CORE AGAINST RANDOM OPPONENTS IN THE BAYOU QUEUE.</p>
-                                    <p>TRAINING LEVEL IS THE PRIMARY WIN CONDITION.</p>
                                 </div>
-                                <button className="btn-enter" onClick={handleJoinBattle}>
+                                <button className="btn-enter" onClick={handleJoinBattle} style={{ marginBottom: '20px' }}>
                                     ENTER MATCHMAKING QUEUE
                                 </button>
+
+                                <div className="global-logs">
+                                    <div className="log-header">GLOBAL SYNAPTIC CLASHES</div>
+                                    <div className="log-deck global-deck">
+                                        {liveData?.globalBattles?.map((b: any) => (
+                                            <div key={b.id} className="global-log-entry">
+                                                <span className="global-time">
+                                                    {new Date(b.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                                </span>
+                                                <span className="global-winner">{b.winnerName}</span>
+                                                <span className="global-vs">defeated</span>
+                                                <span className="global-loser">{b.loserName}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         )}
 
@@ -450,6 +492,84 @@ export default function ArenaPage() {
                     font-size: 0.75rem;
                     color: var(--accent-cyan);
                 }
+
+                /* Live Roster & Global Feed */
+                .online-roster {
+                    margin-top: 15px;
+                    padding: 10px;
+                    background: rgba(0, 255, 204, 0.05);
+                    border-radius: 4px;
+                    border: 1px solid rgba(0, 255, 204, 0.2);
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    overflow: hidden;
+                }
+                .roster-label {
+                    font-family: var(--font-mono);
+                    font-size: 0.7rem;
+                    color: var(--accent-cyan);
+                    font-weight: bold;
+                    white-space: nowrap;
+                    flex-shrink: 0;
+                }
+                .roster-scroll {
+                    flex-grow: 1;
+                    overflow: hidden;
+                    position: relative;
+                }
+                .roster-track {
+                    display: flex;
+                    gap: 20px;
+                    white-space: nowrap;
+                    animation: marquee 20s linear infinite;
+                }
+                .online-agent {
+                    font-family: var(--font-mono);
+                    font-size: 0.75rem;
+                    color: #fff;
+                }
+                @keyframes marquee {
+                    0% { transform: translateX(100%); }
+                    100% { transform: translateX(-100%); }
+                }
+
+                .global-feed-container {
+                    display: flex;
+                    flex-direction: column;
+                    height: 100%;
+                }
+                .global-logs {
+                    flex-grow: 1;
+                    border-top: 1px dashed rgba(255, 255, 255, 0.2);
+                    padding-top: 15px;
+                    margin-top: 15px;
+                }
+                .log-header {
+                    font-family: var(--font-mono);
+                    font-size: 0.8rem;
+                    color: rgba(255, 255, 255, 0.5);
+                    margin-bottom: 10px;
+                    letter-spacing: 1px;
+                }
+                .global-deck {
+                    height: 200px;
+                }
+                .global-log-entry {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-family: var(--font-mono);
+                    font-size: 0.75rem;
+                    margin-bottom: 8px;
+                    padding: 6px;
+                    background: rgba(255, 255, 255, 0.02);
+                    border-left: 2px solid var(--accent-cyan);
+                }
+                .global-time { color: rgba(255, 255, 255, 0.4); font-size: 0.65rem; width: 60px; }
+                .global-winner { color: #00FF66; font-weight: bold; }
+                .global-vs { color: rgba(255, 255, 255, 0.5); font-size: 0.65rem; }
+                .global-loser { color: #FF3E3E; }
 
                 /* Battle Terminal */
                 .arena-stats {
